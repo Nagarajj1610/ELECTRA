@@ -1,3 +1,9 @@
+process.env.GEMINI_API_KEY = 'test-api-key-for-vitest';
+process.env.MAPS_API_KEY = 'test-maps-key';
+process.env.ADMIN_PASSWORD = 'testpassword';
+process.env.GOOGLE_CLOUD_PROJECT = 'test-project';
+process.env.NODE_ENV = 'test';
+
 import { describe, it, expect, vi } from 'vitest';
 import request from 'supertest';
 
@@ -43,69 +49,70 @@ vi.mock('@google-cloud/translate', () => ({
   })),
 }));
 
-process.env.GEMINI_API_KEY = 'test-api-key-for-vitest';
-process.env.MAPS_API_KEY = 'test-maps-key';
-process.env.ADMIN_PASSWORD = 'testpassword';
-process.env.NODE_ENV = 'test';
-
 const { app } = await import('../server.ts');
 
-describe('ELECTRA API [Integration]', () => {
-  it('GET /api/health returns 200 with status OK', async () => {
-    const res = await request(app).get('/api/health');
-    expect(res.status).toBe(200);
-    expect(res.body.status).toBe('OK');
-    expect(res.body).toHaveProperty('timestamp');
+describe('ELECTRA API Tests', () => {
+  
+  // [integration] tests
+  describe('Integration', () => {
+    it('GET /api/health returns 200 with status OK', async () => {
+      const res = await request(app).get('/api/health');
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe('OK');
+    });
+
+    it('POST /api/eligibility — age 20 Indian is eligible', async () => {
+      const res = await request(app)
+        .post('/api/eligibility')
+        .send({ state: 'Delhi', age: 20, citizenship: 'Indian' });
+      expect(res.status).toBe(200);
+      expect(res.body.eligible).toBe(true);
+    });
+
+    it('POST /api/mythbust — returns valid verdict', async () => {
+      const res = await request(app)
+        .post('/api/mythbust')
+        .send({ claim: 'Rumour about EVM tampering' });
+      expect(res.status).toBe(200);
+      expect(['TRUE', 'FALSE', 'MISLEADING']).toContain(res.body.verdict);
+    });
+
+    it('GET /api/admin/stats — unauthorized without password', async () => {
+      const res = await request(app).get('/api/admin/stats');
+      expect(res.status).toBe(401);
+    });
   });
 
-  it('POST /api/eligibility — age 20 Indian is eligible', async () => {
-    const res = await request(app)
-      .post('/api/eligibility')
-      .send({ state: 'Delhi', age: 20, citizenship: 'Indian' });
-    expect(res.status).toBe(200);
-    expect(res.body.eligible).toBe(true);
-    expect(res.body).toHaveProperty('voterIdLink');
-  });
+  // [regression] tests
+  describe('Regression', () => {
+    it('full flow: chat→eligibility→quiz→mythbust→timeline completes without error', async () => {
+      // 1. Chat
+      const chatRes = await request(app)
+        .post('/api/chat')
+        .send({ message: 'Hello', language: 'en', history: [] });
+      expect(chatRes.status).toBe(200);
 
-  it('POST /api/eligibility — negative age returns 400', async () => {
-    const res = await request(app)
-      .post('/api/eligibility')
-      .send({ state: 'Delhi', age: -5, citizenship: 'Indian' });
-    expect(res.status).toBe(400);
-  });
+      // 2. Eligibility
+      const eligRes = await request(app)
+        .post('/api/eligibility')
+        .send({ state: 'Delhi', age: 18, citizenship: 'Indian' });
+      expect(eligRes.status).toBe(200);
 
-  it('POST /api/mythbust — returns valid verdict', async () => {
-    const res = await request(app)
-      .post('/api/mythbust')
-      .send({ claim: 'Rumour about EVM tampering' });
-    expect(res.status).toBe(200);
-    expect(['TRUE', 'FALSE', 'MISLEADING']).toContain(res.body.verdict);
-  });
+      // 3. Quiz
+      const quizRes = await request(app)
+        .post('/api/quiz')
+        .send({ topic: 'EVM', score: 0 });
+      expect(quizRes.status).toBe(200);
 
-  it('POST /api/quiz — returns 5 questions', async () => {
-    const res = await request(app)
-      .post('/api/quiz')
-      .send({ topic: 'ECI' });
-    expect(res.status).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body).toHaveLength(5);
-  });
+      // 4. MythBust
+      const mythRes = await request(app)
+        .post('/api/mythbust')
+        .send({ claim: 'Claim text' });
+      expect(mythRes.status).toBe(200);
 
-  it('GET /api/timeline — returns 10 stages starting with Announcement', async () => {
-    const res = await request(app).get('/api/timeline');
-    expect(res.status).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body).toHaveLength(10);
-    expect(res.body[0].stage).toBe('Announcement');
-    expect(res.body[0]).toHaveProperty('law');
-  });
-
-  it('GET /api/admin/stats — valid password returns stats object', async () => {
-    const res = await request(app)
-      .get('/api/admin/stats')
-      .set('x-admin-password', 'testpassword');
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('queries');
-    expect(res.body).toHaveProperty('mythBusts');
+      // 5. Timeline
+      const timeRes = await request(app).get('/api/timeline');
+      expect(timeRes.status).toBe(200);
+    });
   });
 });

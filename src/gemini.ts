@@ -2,12 +2,11 @@ import { GoogleGenerativeAI, type Content, type SafetySetting, HarmCategory, Har
 import NodeCache from 'node-cache';
 import logger from './logger.ts';
 import { env } from './config/env.ts';
-import { Verdict } from './types/index.ts';
+import { Verdict, CACHE_TTL } from './constants.ts';
 import type { QuizQuestion, MythBustResult } from './types/index.ts';
-import { SYSTEM_INSTRUCTION, getQuizPrompt, getMythBustPrompt, FALLBACK_QUIZ } from './prompts/index.ts';
+import { ELECTRA_SYSTEM_PROMPT, QUIZ_PROMPT, MYTHBUST_PROMPT, FALLBACK_QUIZ } from './prompts/index.ts';
 import { stripMarkdownJson, isValidQuizArray, safeJsonParse } from './utils/helpers.ts';
-import { CACHE_TTL_QUIZ, CACHE_CHECK_PERIOD } from './constants.ts';
-import { AppError } from './utils/AppError.ts';
+import { AppError } from './errors/AppError.ts';
 
 const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY || '');
 
@@ -20,11 +19,11 @@ const safetySettings: SafetySetting[] = [
 
 const model = genAI.getGenerativeModel({
   model: 'gemini-2.5-flash',
-  systemInstruction: SYSTEM_INSTRUCTION,
+  systemInstruction: ELECTRA_SYSTEM_PROMPT,
   safetySettings,
 });
 
-const quizCache = new NodeCache({ stdTTL: CACHE_TTL_QUIZ, checkperiod: CACHE_CHECK_PERIOD });
+const quizCache = new NodeCache({ stdTTL: CACHE_TTL.quiz, checkperiod: CACHE_TTL.checkPeriod });
 
 /**
  * Checks if Gemini is available.
@@ -38,6 +37,7 @@ const isGeminiEnabled = (): boolean => !!env.GEMINI_API_KEY && env.GEMINI_API_KE
  * @param {string} message - The new message
  * @param {string} language - Target language (en/hi)
  * @returns {Promise<AsyncGenerator<{ text: () => string }>>} The chat stream
+ * @throws {AppError}
  */
 export const chatStream = async (history: Content[], message: string, language: string = 'en') => {
   if (!isGeminiEnabled()) {
@@ -53,6 +53,7 @@ export const chatStream = async (history: Content[], message: string, language: 
  * Executes a Gemini prompt expecting JSON.
  * @param {string} prompt - The prompt
  * @returns {Promise<string>} Raw text
+ * @throws {AppError}
  */
 const callGeminiJson = async (prompt: string): Promise<string> => {
   const result = await model.generateContent({
@@ -67,6 +68,7 @@ const callGeminiJson = async (prompt: string): Promise<string> => {
  * @param {string} topic - The topic
  * @param {number} score - Current score
  * @returns {Promise<QuizQuestion[]>} Array of questions
+ * @throws {AppError}
  */
 export const generateQuiz = async (topic: string, score: number = 0): Promise<QuizQuestion[]> => {
   const difficulty = score > 60 ? 'hard' : score > 30 ? 'medium' : 'easy';
@@ -76,7 +78,7 @@ export const generateQuiz = async (topic: string, score: number = 0): Promise<Qu
   if (!isGeminiEnabled()) return FALLBACK_QUIZ;
 
   try {
-    const prompt = getQuizPrompt(topic, difficulty);
+    const prompt = QUIZ_PROMPT(topic, difficulty);
     const rawText = await callGeminiJson(prompt);
     const parsed = safeJsonParse(rawText);
     
@@ -86,6 +88,7 @@ export const generateQuiz = async (topic: string, score: number = 0): Promise<Qu
     }
     throw new AppError('Invalid quiz format from Gemini', 500, 'GEMINI_INVALID_JSON');
   } catch (err: any) {
+    if (err instanceof AppError) throw err;
     logger.warn(`Quiz generation failed (topic=${topic}): ${err?.message || err}.`);
     return FALLBACK_QUIZ;
   }
@@ -95,6 +98,7 @@ export const generateQuiz = async (topic: string, score: number = 0): Promise<Qu
  * Fact-checks an election-related claim using Gemini.
  * @param {string} claim - The claim
  * @returns {Promise<MythBustResult>} Verdict
+ * @throws {AppError}
  */
 export const mythBust = async (claim: string): Promise<MythBustResult> => {
   if (!isGeminiEnabled()) {
@@ -102,7 +106,7 @@ export const mythBust = async (claim: string): Promise<MythBustResult> => {
   }
 
   try {
-    const prompt = getMythBustPrompt(claim);
+    const prompt = MYTHBUST_PROMPT(claim);
     const rawText = await callGeminiJson(prompt);
     const parsed = safeJsonParse(rawText) as MythBustResult | null;
     
@@ -111,6 +115,7 @@ export const mythBust = async (claim: string): Promise<MythBustResult> => {
     }
     return parsed;
   } catch (err: any) {
+    if (err instanceof AppError) throw err;
     logger.warn(`Myth bust failed: ${err?.message || err}`);
     return {
       verdict: Verdict.MISLEADING,

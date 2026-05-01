@@ -1,54 +1,31 @@
 import { TranslationServiceClient } from '@google-cloud/translate';
-import logger from './logger.ts';
 import { env } from './config/env.ts';
+import logger from './logger.ts';
 
 const translationClient = new TranslationServiceClient();
-const location = 'global';
 
 /**
- * Checks if the translation project is configured.
- * @returns {string} Project ID or empty
- */
-const getProjectId = (): string => env.GOOGLE_CLOUD_PROJECT || '';
-
-/**
- * Calls the Google Cloud Translation API.
- * @param {string} text - Text to translate
- * @param {string} target - Target language code
- * @param {string} projectId - GCP project ID
- * @returns {Promise<string>} Translated text
- */
-const callTranslationApi = async (text: string, target: string, projectId: string): Promise<string> => {
-  const request = {
-    parent: `projects/${projectId}/locations/${location}`,
-    contents: [text],
-    mimeType: 'text/plain' as const,
-    targetLanguageCode: target,
-  };
-  const [response] = await translationClient.translateText(request);
-  const translated = response.translations?.[0]?.translatedText;
-  if (!translated) throw new Error('Empty translation response');
-  return translated;
-};
-
-/**
- * Translates text to the target language using Google Cloud Translation API v3.
- * Falls back to returning the original text if translation fails.
- * @param {string} text - The input text
- * @param {'hi' | 'en'} targetLanguage - The target language
+ * Translates text between English and Hindi using Google Cloud Translation API.
+ * @param {string} text - The text to translate
+ * @param {string} targetLanguage - The target language code ('en' or 'hi')
  * @returns {Promise<string>} The translated text
  */
-export const translateText = async (text: string, targetLanguage: 'hi' | 'en'): Promise<string> => {
-  const projectId = getProjectId();
-  if (!projectId) {
-    logger.warn('GOOGLE_CLOUD_PROJECT not set — skipping translation');
-    return text;
+export const translateText = async (text: string, targetLanguage: string): Promise<string> => {
+  if (!env.GEMINI_API_KEY || env.GEMINI_API_KEY === 'test') {
+    return `[Mock Translation to ${targetLanguage}] ${text}`;
   }
 
   try {
-    return await callTranslationApi(text, targetLanguage, projectId);
+    const [response] = await translationClient.translateText({
+      parent: `projects/${env.GOOGLE_CLOUD_PROJECT}/locations/global`,
+      contents: [text],
+      mimeType: 'text/plain',
+      targetLanguageCode: targetLanguage,
+    });
+
+    return response.translations?.[0]?.translatedText || text;
   } catch (error: any) {
-    logger.error(`Translation error (target=${targetLanguage}): ${error?.message || error}`);
-    return text;
+    logger.error('Translation error:', error);
+    return text; // Fallback to original text
   }
 };

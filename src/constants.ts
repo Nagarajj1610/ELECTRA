@@ -1,20 +1,43 @@
-/**
- * Global application constants to avoid magic numbers.
+/** 
+ * Global application constants.
+ * ALL magic strings, numbers, and enums reside here.
  */
-export const PORT = 8080;
-export const CACHE_TTL_TIMELINE = 3600; // 1 hour
-export const CACHE_TTL_QUIZ = 600; // 10 minutes
-export const CACHE_CHECK_PERIOD = 120; // 2 minutes
-export const GEO_CACHE_TTL = 86400; // 24 hours
-export const GEO_CACHE_CHECK = 3600; // 1 hour
-export const RATE_LIMIT_API_WINDOW = 15 * 60 * 1000; // 15 mins
-export const RATE_LIMIT_API_MAX = 100;
-export const RATE_LIMIT_CHAT_WINDOW = 60 * 1000; // 1 min
-export const RATE_LIMIT_CHAT_MAX = 10;
-export const MAX_MESSAGE_LENGTH = 1000;
-export const MAX_TRANSLATE_LENGTH = 2000;
-export const MAX_CLAIM_LENGTH = 500;
-export const MIN_AGE = 0;
-export const MAX_AGE = 120;
-export const DEFAULT_QUIZ_SCORE = 0;
-export const QUIZ_QUESTIONS_COUNT = 5;
+
+export const PORT = process.env.PORT || 8080;
+
+export const RATE_LIMIT = {
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  chatMax: 10
+};
+
+/** 
+ * Verdict constants for MythBust.
+ * Using const object for Node.js 22 --experimental-strip-types compatibility.
+ */
+export const Verdict = {
+  TRUE: 'TRUE',
+  FALSE: 'FALSE',
+  MISLEADING: 'MISLEADING',
+} as const;
+export type Verdict = (typeof Verdict)[keyof typeof Verdict];
+
+export const CACHE_TTL = {
+  timeline: 3600,
+  quiz: 600,
+  geocoding: 86400,
+  checkPeriod: 120
+};
+
+export const VALIDATION = {
+  MAX_MESSAGE_LENGTH: 1000,
+  MAX_TRANSLATE_LENGTH: 2000,
+  MAX_CLAIM_LENGTH: 500,
+  MIN_AGE: 0,
+  MAX_AGE: 120
+};
+
+export const QUIZ_CONFIG = {
+  DEFAULT_SCORE: 0,
+  QUESTIONS_COUNT: 5
+};

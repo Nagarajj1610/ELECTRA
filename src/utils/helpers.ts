@@ -1,4 +1,4 @@
-import { QUIZ_QUESTIONS_COUNT } from '../constants.ts';
+import { QUIZ_CONFIG } from '../constants.ts';
 import type { QuizQuestion } from '../types/index.ts';
 
 /**
@@ -16,7 +16,7 @@ export const stripMarkdownJson = (text: string): string => {
  * @returns {boolean} True if valid
  */
 export const isValidQuizArray = (parsed: any[]): parsed is QuizQuestion[] => {
-  return Array.isArray(parsed) && parsed.length === QUIZ_QUESTIONS_COUNT;
+  return Array.isArray(parsed) && parsed.length === QUIZ_CONFIG.QUESTIONS_COUNT;
 };
 
 /**

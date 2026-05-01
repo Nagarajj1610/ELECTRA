@@ -1,18 +1,10 @@
 import { z } from 'zod';
-import { MAX_MESSAGE_LENGTH, MAX_TRANSLATE_LENGTH, MAX_CLAIM_LENGTH, MIN_AGE, MAX_AGE, DEFAULT_QUIZ_SCORE } from '../constants.ts';
-
-/** Verdict constants for MythBust */
-export const Verdict = {
-  TRUE: 'TRUE',
-  FALSE: 'FALSE',
-  MISLEADING: 'MISLEADING',
-} as const;
-export type Verdict = (typeof Verdict)[keyof typeof Verdict];
+import { VALIDATION, QUIZ_CONFIG, Verdict } from '../constants.ts';
 
 // ─── API Request Schemas ───────────────────────────────────────────────────
 
 export const ChatRequestSchema = z.object({
-  message: z.string().min(1, 'Message cannot be empty').max(MAX_MESSAGE_LENGTH, 'Message too long'),
+  message: z.string().min(1, 'Message cannot be empty').max(VALIDATION.MAX_MESSAGE_LENGTH, 'Message too long'),
   language: z.enum(['en', 'hi']).default('en'),
   history: z.array(z.any()).default([]),
 });
@@ -20,25 +12,25 @@ export type ChatRequest = z.infer<typeof ChatRequestSchema>;
 
 export const EligibilityRequestSchema = z.object({
   state: z.string().min(1).max(100),
-  age: z.coerce.number().int().min(MIN_AGE, 'Age must be non-negative').max(MAX_AGE, 'Age seems invalid'),
+  age: z.coerce.number().int().min(VALIDATION.MIN_AGE, 'Age must be non-negative').max(VALIDATION.MAX_AGE, 'Age seems invalid'),
   citizenship: z.string().min(1),
 });
 export type EligibilityRequest = z.infer<typeof EligibilityRequestSchema>;
 
 export const TranslateRequestSchema = z.object({
-  text: z.string().min(1).max(MAX_TRANSLATE_LENGTH),
+  text: z.string().min(1).max(VALIDATION.MAX_TRANSLATE_LENGTH),
   target: z.enum(['en', 'hi']),
 });
 export type TranslateRequest = z.infer<typeof TranslateRequestSchema>;
 
 export const QuizRequestSchema = z.object({
   topic: z.string().min(1).max(100),
-  score: z.number().min(0).max(100).default(DEFAULT_QUIZ_SCORE),
+  score: z.number().min(0).max(100).default(QUIZ_CONFIG.DEFAULT_SCORE),
 });
 export type QuizRequest = z.infer<typeof QuizRequestSchema>;
 
 export const MythBustRequestSchema = z.object({
-  claim: z.string().min(1, 'Claim cannot be empty').max(MAX_CLAIM_LENGTH),
+  claim: z.string().min(1, 'Claim cannot be empty').max(VALIDATION.MAX_CLAIM_LENGTH),
 });
 export type MythBustRequest = z.infer<typeof MythBustRequestSchema>;
 
@@ -87,3 +79,5 @@ export interface AdminStats {
   quizCompletions: number;
   languages: { en: number; hi: number };
 }
+
+export type { Verdict };
