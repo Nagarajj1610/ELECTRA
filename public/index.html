@@ -66,11 +66,11 @@
     <div class="app-shell scroll-hide">
         <header class="p-4 flex items-center justify-between bg-transparent">
             <div class="flex items-center gap-2">
-                <svg class="w-6 h-6 text-navy loader-chakra" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6" /><circle cx="50" cy="50" r="10" fill="currentColor" /></svg>
-                <span class="text-xl font-bold tracking-tight text-navy">ELECTRA</span>
+                <svg class="w-6 h-6 text-[#0D2167] loader-chakra" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6" /><circle cx="50" cy="50" r="10" fill="currentColor" /></svg>
+                <span class="text-xl font-bold tracking-tight text-[#0D2167]">ELECTRA</span>
             </div>
             <div class="flex flex-col items-end">
-                <div class="w-8 h-8 bg-navy text-white rounded-full flex items-center justify-center"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg></div>
+                <div class="w-8 h-8 bg-[#0D2167] text-white rounded-full flex items-center justify-center"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg></div>
                 <div class="text-[8px] font-bold text-gray-400 mt-1 uppercase tracking-widest" id="progress-text">EXPLORED 0 OF 8 TOPICS</div>
             </div>
         </header>
@@ -89,7 +89,7 @@
                     <h2 class="text-2xl font-bold mb-2">Welcome to ELECTRA</h2>
                     <p class="text-sm text-gray-500 mb-8">I'll guide you through the Indian election process.</p>
                     <div class="space-y-3">
-                        <button onclick="startOnboarding('I am a first-time voter')" class="w-full py-4 bg-navy text-white rounded-2xl font-bold">I'm a first-time voter</button>
+                        <button onclick="startOnboarding('I am a first-time voter')" class="w-full py-4 bg-[#0D2167] text-white rounded-2xl font-bold">I'm a first-time voter</button>
                         <button onclick="startOnboarding('I want to understand the process')" class="w-full py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold">I want to understand the process</button>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
             <section id="content-chat" class="flex flex-col h-full">
                 <div id="chat-messages" class="flex flex-col gap-6 pb-4">
                     <div class="welcome-card fade-in">
-                        <h2 class="text-3xl font-bold text-navy mb-4">Welcome! I'm here to help with any election questions.</h2>
+                        <h2 class="text-3xl font-bold text-[#0D2167] mb-4">Welcome! I'm here to help with any election questions.</h2>
                         <button onclick="startGuidedJourney()" class="guide-me-btn">🚀 Guide Me (10 Steps)</button>
                     </div>
                     <div class="grid grid-cols-2 gap-3 mb-6">
@@ -110,9 +110,9 @@
             
             <!-- Other Sections -->
             <section id="content-timeline" class="hidden"><div class="space-y-4" id="timeline-container"></div></section>
-            <section id="content-eligibility" class="hidden"><div class="welcome-card"><h2 class="text-2xl font-bold mb-6">Are you eligible?</h2><form id="eligibility-form" class="space-y-4"><select id="el-state" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><option value="">Select State</option><option value="Delhi">Delhi</option></select><input type="number" id="el-age" placeholder="Age" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><button type="submit" class="w-full py-4 bg-navy text-white rounded-2xl font-bold">Verify Now</button></form><div id="eligibility-result" class="hidden mt-6 p-4 rounded-2xl"></div></div></section>
-            <section id="content-maps" class="hidden"><div class="mb-4 flex gap-2"><input type="text" id="pincode-input" placeholder="Pincode" maxlength="6" class="flex-grow p-3 bg-white rounded-2xl border border-gray-100 text-navy font-medium"><button id="pincode-btn" class="bg-navy text-white px-6 rounded-2xl font-bold hover:bg-opacity-90">Find</button></div><div id="map" class="w-full h-64 rounded-3xl bg-gray-200"></div><div id="constituency-info" class="hidden mt-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm text-xs"></div></section>
-            <section id="content-quiz" class="hidden"><div id="quiz-intro" class="text-center py-8"><h2 class="text-2xl font-bold mb-4">Voter Quiz</h2><button onclick="startQuiz('Voting')" class="w-full p-4 bg-white border rounded-2xl font-bold">Start Quiz</button></div><div id="quiz-container" class="hidden space-y-4"><div id="quiz-question" class="text-lg font-bold"></div><div id="quiz-options" class="space-y-2"></div><div id="quiz-explanation" class="hidden p-4 rounded-2xl bg-blue-50"></div><button id="quiz-next" class="hidden w-full py-4 bg-navy text-white rounded-2xl">Next</button></div></section>
+            <section id="content-eligibility" class="hidden"><div class="welcome-card"><h2 class="text-2xl font-bold mb-6">Are you eligible?</h2><form id="eligibility-form" class="space-y-4"><select id="el-state" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><option value="">Select State</option><option value="Delhi">Delhi</option></select><input type="number" id="el-age" placeholder="Age" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><button type="submit" class="w-full py-4 bg-[#0D2167] text-white rounded-2xl font-bold">Verify Now</button></form><div id="eligibility-result" class="hidden mt-6 p-4 rounded-2xl"></div></div></section>
+            <section id="content-maps" class="hidden"><div class="mb-4 flex gap-2"><input type="text" id="pincode-input" placeholder="Pincode" maxlength="6" class="flex-grow p-3 bg-white rounded-2xl border border-gray-100 text-[#0D2167] font-medium"><button id="pincode-btn" class="bg-[#0D2167] text-white px-6 rounded-2xl font-bold hover:bg-opacity-90">Find</button></div><div id="map" class="w-full h-64 rounded-3xl bg-gray-200"></div><div id="constituency-info" class="hidden mt-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm text-xs"></div></section>
+            <section id="content-quiz" class="hidden"><div id="quiz-intro" class="text-center py-8"><h2 class="text-2xl font-bold mb-4">Voter Quiz</h2><button onclick="startQuiz('Voting')" class="w-full p-4 bg-white border rounded-2xl font-bold">Start Quiz</button></div><div id="quiz-container" class="hidden space-y-4"><div id="quiz-question" class="text-lg font-bold"></div><div id="quiz-options" class="space-y-2"></div><div id="quiz-explanation" class="hidden p-4 rounded-2xl bg-blue-50"></div><button id="quiz-next" class="hidden w-full py-4 bg-[#0D2167] text-white rounded-2xl">Next</button></div></section>
         </main>
 
         <div class="input-bar-container">
@@ -246,7 +246,7 @@
 
         function formatText(text) {
             return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                       .replace(/\*\*(.*?)\*\*/g, '<span class="font-bold text-navy">$1</span>')
+                       .replace(/\*\*(.*?)\*\*/g, '<span class="font-bold text-[#0D2167]">$1</span>')
                        .replace(/\n/g, '<br>');
         }
 
@@ -327,7 +327,7 @@
                 const last = bubbles[bubbles.length - 1];
                 if (last) {
                     const btn = document.createElement('button');
-                    btn.className = "mt-4 block text-[10px] font-bold text-navy underline";
+                    btn.className = "mt-4 block text-[10px] font-bold text-[#0D2167] underline";
                     btn.innerText = currentStep < 9 ? "Continue Journey" : "Complete!";
                     btn.onclick = () => { currentStep++; if(currentStep < 10) updateStep(); else currentStep = -1; };
                     last.appendChild(btn);
