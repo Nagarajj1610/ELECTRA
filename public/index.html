@@ -20,7 +20,7 @@
         h1, h2, h3 { font-family: 'Playfair Display', serif; }
         
         .premium-nav { background-color: var(--saffron); border-radius: 40px; margin: 10px 16px; padding: 6px; display: flex; justify-content: space-between; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0; border-radius: 30px; transition: all 0.3s; color: rgba(255,255,255,0.8); }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0; border-radius: 30px; transition: all 0.3s; color: rgba(13, 33, 103, 0.6); }
         .nav-item.active { background-color: white; color: var(--navy); }
         .nav-item svg { width: 20px; height: 20px; }
         .nav-item span { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -98,7 +98,7 @@
             <!-- Other Sections -->
             <section id="content-timeline" class="hidden"><div class="space-y-4" id="timeline-container"></div></section>
             <section id="content-eligibility" class="hidden"><div class="welcome-card"><h2 class="text-2xl font-bold mb-6">Are you eligible?</h2><form id="eligibility-form" class="space-y-4"><select id="el-state" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><option value="">Select State</option><option value="Delhi">Delhi</option></select><input type="number" id="el-age" placeholder="Age" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><button type="submit" class="w-full py-4 bg-navy text-white rounded-2xl font-bold">Verify Now</button></form><div id="eligibility-result" class="hidden mt-6 p-4 rounded-2xl"></div></div></section>
-            <section id="content-maps" class="hidden"><div class="mb-4 flex gap-2"><input type="text" id="pincode-input" placeholder="Pincode" maxlength="6" class="flex-grow p-3 bg-white rounded-2xl border"><button id="pincode-btn" class="bg-navy text-white px-6 rounded-2xl font-bold">Find</button></div><div id="map" class="w-full h-64 rounded-3xl bg-gray-200"></div></section>
+            <section id="content-maps" class="hidden"><div class="mb-4 flex gap-2"><input type="text" id="pincode-input" placeholder="Pincode" maxlength="6" class="flex-grow p-3 bg-white rounded-2xl border border-gray-100 text-navy font-medium"><button id="pincode-btn" class="bg-navy text-white px-6 rounded-2xl font-bold hover:bg-opacity-90">Find</button></div><div id="map" class="w-full h-64 rounded-3xl bg-gray-200"></div><div id="constituency-info" class="hidden mt-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm text-xs"></div></section>
             <section id="content-quiz" class="hidden"><div id="quiz-intro" class="text-center py-8"><h2 class="text-2xl font-bold mb-4">Voter Quiz</h2><button onclick="startQuiz('Voting')" class="w-full p-4 bg-white border rounded-2xl font-bold">Start Quiz</button></div><div id="quiz-container" class="hidden space-y-4"><div id="quiz-question" class="text-lg font-bold"></div><div id="quiz-options" class="space-y-2"></div><div id="quiz-explanation" class="hidden p-4 rounded-2xl bg-blue-50"></div><button id="quiz-next" class="hidden w-full py-4 bg-navy text-white rounded-2xl">Next</button></div></section>
         </main>
 
@@ -248,8 +248,54 @@
             document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
             const tabBtn = document.getElementById(`tab-${tabId}`);
             if(tabBtn) tabBtn.classList.add('active');
+            
             if(tabId === 'timeline') loadTimeline();
+            if(tabId === 'maps' && !map) initMap();
         }
+
+        let map;
+        /**
+         * Initializes Google Maps after fetching API key.
+         */
+        async function initMap() {
+            try {
+                const res = await fetch('/api/maps/key');
+                const { key } = await res.json();
+                const script = document.createElement('script');
+                script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&callback=onMapLoaded`;
+                script.async = true;
+                document.head.appendChild(script);
+            } catch (e) {
+                console.error('Failed to init map:', e);
+            }
+        }
+
+        window.onMapLoaded = () => {
+            if(typeof google !== 'undefined') {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat: 20.5937, lng: 78.9629 },
+                    zoom: 5,
+                    styles: [{ "featureType": "all", "elementType": "all", "stylers": [{ "saturation": -100 }] }],
+                    disableDefaultUI: true
+                });
+
+                document.getElementById('pincode-btn').onclick = async () => {
+                    const pin = document.getElementById('pincode-input').value;
+                    if(pin.length !== 6) return;
+                    const res = await fetch(`/api/maps/lookup?pincode=${pin}`);
+                    const data = await res.json();
+                    if(data.lat) {
+                        const pos = { lat: data.lat, lng: data.lng };
+                        map.setCenter(pos);
+                        map.setZoom(14);
+                        new google.maps.Marker({ position: pos, map });
+                        const info = document.getElementById('constituency-info');
+                        info.innerHTML = `<strong>Constituency:</strong> ${data.constituency}<br><strong>State:</strong> ${data.state}`;
+                        info.classList.remove('hidden');
+                    }
+                };
+            }
+        };
 
         function startGuidedJourney() {
             currentStep = 0;
