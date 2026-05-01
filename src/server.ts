@@ -227,7 +227,7 @@ app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
 
 // ─── Start Server ──────────────────────────────────────────────────────────
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(port, () => {
-    logger.info(`ELECTRA server running at http://localhost:${port}`);
+  app.listen(port, '0.0.0.0', () => {
+    logger.info(`ELECTRA server running at http://0.0.0.0:${port}`);
   });
 }
