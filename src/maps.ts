@@ -28,11 +28,11 @@ export const lookupConstituency = async (pincode: string): Promise<ConstituencyI
     // In a real app, this would call the Google Maps Geocoding API.
     // Here we mock it for the demo.
     const mockConstituencies: Record<string, ConstituencyInfo> = {
-      '110001': { state: 'Delhi', lokSabha: 'New Delhi', vidhanSabha: 'New Delhi' },
-      '400001': { state: 'Maharashtra', lokSabha: 'Mumbai South', vidhanSabha: 'Colaba' },
-      '560001': { state: 'Karnataka', lokSabha: 'Bangalore Central', vidhanSabha: 'Shivajinagar' },
-      '600001': { state: 'Tamil Nadu', lokSabha: 'Chennai Central', vidhanSabha: 'Harbour' },
-      '700001': { state: 'West Bengal', lokSabha: 'Kolkata Uttar', vidhanSabha: 'Jorasanko' },
+      '110001': { state: 'Delhi', lokSabha: 'New Delhi', vidhanSabha: 'New Delhi', lat: 28.6139, lng: 77.2090 },
+      '400001': { state: 'Maharashtra', lokSabha: 'Mumbai South', vidhanSabha: 'Colaba', lat: 18.9220, lng: 72.8347 },
+      '560001': { state: 'Karnataka', lokSabha: 'Bangalore Central', vidhanSabha: 'Shivajinagar', lat: 12.9716, lng: 77.5946 },
+      '600001': { state: 'Tamil Nadu', lokSabha: 'Chennai Central', vidhanSabha: 'Harbour', lat: 13.0827, lng: 80.2707 },
+      '700001': { state: 'West Bengal', lokSabha: 'Kolkata Uttar', vidhanSabha: 'Jorasanko', lat: 22.5726, lng: 88.3639 },
     };
 
     const data = mockConstituencies[pincode];

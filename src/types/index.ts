@@ -70,6 +70,8 @@ export interface ConstituencyInfo {
   state: string;
   lokSabha: string;
   vidhanSabha: string;
+  lat?: number;
+  lng?: number;
 }
 
 /** Admin Stats shape */

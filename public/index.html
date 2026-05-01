@@ -7,6 +7,19 @@
     <title>ELECTRA — Indian Election Intelligence Assistant</title>
     <meta name="description" content="AI-powered Indian Election Intelligence Assistant for citizens and first-time voters.">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#0D2167',
+                        saffron: '#FF9933',
+                        surface: '#FDF8F4'
+                    }
+                }
+            }
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -282,7 +295,11 @@
                 document.getElementById('pincode-btn').onclick = async () => {
                     const pin = document.getElementById('pincode-input').value;
                     if(pin.length !== 6) return;
-                    const res = await fetch(`/api/maps/lookup?pincode=${pin}`);
+                    const res = await fetch('/api/maps/lookup', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pincode: pin })
+                    });
                     const data = await res.json();
                     if(data.lat) {
                         const pos = { lat: data.lat, lng: data.lng };
