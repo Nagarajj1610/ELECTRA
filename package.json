@@ -1,0 +1,36 @@
+{
+  "name": "electra",
+  "version": "1.0.0",
+  "description": "ELECTRA — AI-powered Indian Election Intelligence Assistant",
+  "main": "src/server.ts",
+  "type": "module",
+  "scripts": {
+    "start": "node --experimental-strip-types src/server.ts",
+    "test": "vitest run",
+    "dev": "node --watch --experimental-strip-types src/server.ts"
+  },
+  "dependencies": {
+    "express": "^4.21.1",
+    "@google/generative-ai": "^0.21.0",
+    "@google-cloud/translate": "^8.5.0",
+    "helmet": "^8.0.0",
+    "express-rate-limit": "^7.4.1",
+    "cors": "^2.8.5",
+    "zod": "^3.23.8",
+    "node-cache": "^5.1.2",
+    "compression": "^1.7.5",
+    "winston": "^3.16.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.4",
+    "supertest": "^7.0.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.9.0",
+    "@types/cors": "^2.8.17",
+    "@types/compression": "^1.7.5"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<!-- ELECTRA v1.0.1 -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELECTRA — Indian Election Intelligence Assistant</title>
+    <meta name="description" content="AI-powered Indian Election Intelligence Assistant for citizens and first-time voters.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22none%22 stroke=%22%23000080%22 stroke-width=%222%22 /><circle cx=%2250%22 cy=%2250%22 r=%228%22 fill=%22%23000080%22 /></svg>">
+    <style>
+        :root {
+            --saffron: #FF9933;
+            --navy: #000080;
+            --green: #138808;
+            --ashoka: #1a3a6b;
+            --surface: #F8F7F4;
+            --text: #1a1a2e;
+        }
+        body { font-family: 'DM Sans', sans-serif; background-color: #e5e7eb; color: var(--text); margin: 0; padding: 0; display: flex; justify-content: center; }
+        .app-shell { width: 100%; max-width: 480px; min-height: 100vh; background-color: var(--surface); box-shadow: 0 0 40px rgba(0,0,0,0.1); position: relative; display: flex; flex-direction: column; overflow-x: hidden; }
+        h1, h2, h3 { font-family: 'DM Serif Display', serif; letter-spacing: -0.02em; }
+        .tricolor-bar { height: 4px; background: linear-gradient(to right, var(--saffron) 33.33%, white 33.33%, white 66.66%, var(--green) 66.66%); }
+        .tab-active { border-bottom: 3px solid var(--navy); color: var(--navy); font-weight: bold; }
+        .chat-bubble-user { background-color: var(--saffron); color: white; border-radius: 20px 20px 0 20px; }
+        .chat-bubble-electra { background-color: white; color: var(--text); border-radius: 20px 20px 20px 0; border: 1px solid #e2e8f0; }
+        .stagger-fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .loader-chakra { animation: spin 4s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .scroll-hide::-webkit-scrollbar { display: none; }
+        .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        #splash { position: fixed; inset: 0; z-index: 100; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease-out, visibility 0.8s; }
+        .splash-flag { width: 120px; height: 80px; background: linear-gradient(to bottom, var(--saffron) 33.33%, white 33.33%, white 66.66%, var(--green) 66.66%); display: flex; align-items: center; justify-content: center; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .splash-text { margin-top: 24px; font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--navy); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .jargon-term { border-bottom: 1px dotted var(--navy); cursor: help; position: relative; font-weight: bold; }
+        .fixed-in-shell { position: absolute; width: 100%; left: 0; }
+    </style>
+</head>
+<body>
+    <!-- Skip to main content for keyboard/screen reader users -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[200] focus:px-4 focus:py-2 focus:bg-blue-900 focus:text-white focus:rounded-lg focus:text-sm focus:font-bold">Skip to main content</a>
+
+    <div id="splash" role="status" aria-label="Loading ELECTRA">
+        <div class="splash-flag"><svg class="w-10 h-10 text-blue-900 loader-chakra" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2" /><circle cx="50" cy="50" r="8" fill="currentColor" /><g stroke="currentColor" stroke-width="1"><line x1="50" y1="5" x2="50" y2="95" /><line x1="5" y1="50" x2="95" y2="50" /><line x1="18" y1="18" x2="82" y2="82" /><line x1="82" y1="18" x2="18" y2="82" /></g></svg></div>
+        <div class="splash-text">ELECTRA</div>
+        <p class="text-[10px] mt-2 uppercase tracking-widest text-gray-400">Democracy in Action</p>
+    </div>
+
+    <div class="app-shell">
+        <div class="tricolor-bar sticky top-0 w-full z-50"></div>
+        <header class="bg-white shadow-sm pt-1 sticky top-1 w-full z-40">
+            <div class="px-4 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6 text-blue-900 loader-chakra" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2" /><circle cx="50" cy="50" r="8" fill="currentColor" /></svg>
+                    <span id="header-title" class="text-xl font-bold tracking-tight text-blue-900">ELECTRA</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="lang-toggle" aria-label="Toggle language between English and Hindi" class="px-3 py-1 border border-blue-900 rounded-full text-[10px] font-bold text-blue-900">EN</button>
+                    <div class="text-[10px] text-right"><div class="font-bold text-blue-900">1950</div><div class="text-[8px] opacity-50 uppercase font-bold">Helpline</div></div>
+                </div>
+            </div>
+            <nav aria-label="Main navigation" class="px-4 overflow-x-auto scroll-hide bg-white border-t border-gray-100">
+                <ul role="list" class="flex gap-4 min-w-max">
+                    <li><button onclick="switchTab('chat')" id="tab-chat" aria-label="Chat tab" class="px-1 py-3 tab-active text-[10px] uppercase font-bold">Chat</button></li>
+                    <li><button onclick="switchTab('timeline')" id="tab-timeline" aria-label="Timeline tab" class="px-1 py-3 text-gray-500 text-[10px] uppercase font-bold">Timeline</button></li>
+                    <li><button onclick="switchTab('eligibility')" id="tab-eligibility" aria-label="Eligibility tab" class="px-1 py-3 text-gray-500 text-[10px] uppercase font-bold">Eligibility</button></li>
+                    <li><button onclick="switchTab('maps')" id="tab-maps" aria-label="Booth finder tab" class="px-1 py-3 text-gray-500 text-[10px] uppercase font-bold">Booth</button></li>
+                    <li><button onclick="switchTab('quiz')" id="tab-quiz" aria-label="Quiz tab" class="px-1 py-3 text-gray-500 text-[10px] uppercase font-bold">Quiz</button></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main id="main-content" role="main" aria-label="ELECTRA application content" class="flex-grow p-4 overflow-y-auto relative">
+            <section id="content-chat" aria-label="Chat with ELECTRA" class="flex flex-col h-full">
+                <div id="chat-messages" class="flex-grow space-y-4 mb-20" aria-live="polite" aria-atomic="false">
+                    <div class="chat-bubble-electra p-4 max-w-[90%] stagger-fade-in">
+                        <p id="welcome-msg">Namaste! I am ELECTRA. How can I help you today?</p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <button onclick="sendQuickChip('How to register?')" class="px-3 py-1 border border-blue-200 rounded-full text-[10px]">Register</button>
+                            <button onclick="sendQuickChip('What is EVM?')" class="px-3 py-1 border border-blue-200 rounded-full text-[10px]">EVM?</button>
+                            <button onclick="sendQuickChip('Explain NOTA')" class="px-3 py-1 border border-blue-200 rounded-full text-[10px]">NOTA</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="fixed-in-shell bottom-0 bg-gradient-to-t from-surface via-surface to-transparent p-4 pb-6 z-10">
+                    <div id="typing-indicator" class="hidden mb-2 ml-2 flex gap-1"><span class="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce"></span><span class="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce delay-100"></span><span class="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce delay-200"></span></div>
+                    <div role="group" aria-label="Chat input" class="bg-white rounded-2xl shadow-lg p-1 border border-gray-100 flex items-center gap-1">
+                        <button id="voice-btn" aria-label="Voice input" title="Voice input" class="p-2 text-gray-400 hover:text-blue-900 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg></button>
+                        <label for="chat-input" class="sr-only">Message to ELECTRA</label>
+                        <input type="text" id="chat-input" placeholder="Ask ELECTRA..." aria-label="Message to ELECTRA" autocomplete="off" class="flex-grow p-2 focus:outline-none text-sm bg-transparent">
+                        <button id="send-btn" aria-label="Send message" title="Send" class="bg-blue-900 text-white p-2 rounded-xl hover:bg-blue-800 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="content-timeline" aria-label="Election Timeline" class="hidden"><h2 class="text-2xl font-bold mb-4">Election Roadmap</h2><div class="space-y-4" id="timeline-container"></div></section>
+            <section id="content-eligibility" aria-label="Voter Eligibility Checker" class="hidden">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                    <h2 class="text-2xl font-bold mb-1">Are you eligible?</h2>
+                    <form id="eligibility-form" class="space-y-4" novalidate>
+                        <label for="el-state" class="sr-only">Select State</label>
+                        <select id="el-state" class="w-full p-3 bg-gray-50 rounded-xl text-sm border-none" required aria-required="true">
+                            <option value="">Select State</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option><option value="Bihar">Bihar</option><option value="Delhi">Delhi</option><option value="Gujarat">Gujarat</option><option value="Karnataka">Karnataka</option><option value="Maharashtra">Maharashtra</option><option value="Tamil Nadu">Tamil Nadu</option><option value="Telangana">Telangana</option><option value="Uttar Pradesh">Uttar Pradesh</option><option value="West Bengal">West Bengal</option>
+                        </select>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div><label for="el-age" class="sr-only">Age</label><input type="number" id="el-age" placeholder="Age" min="0" max="120" aria-label="Age" class="w-full p-3 bg-gray-50 rounded-xl text-sm border-none" required aria-required="true"></div>
+                            <div><label for="el-citizen" class="sr-only">Citizenship</label><select id="el-citizen" aria-label="Citizenship" class="w-full p-3 bg-gray-50 rounded-xl text-sm border-none" required aria-required="true"><option value="Indian">Indian</option><option value="NRI">NRI</option></select></div>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-blue-900 text-white font-bold rounded-xl text-sm hover:bg-blue-800 transition-colors">Verify Now</button>
+                    </form>
+                    <div id="eligibility-result" class="hidden mt-6 p-4 rounded-xl border"></div>
+                </div>
+            </section>
+            <section id="content-maps" aria-label="Polling Booth Finder" class="hidden flex flex-col h-full"><div class="mb-4 flex gap-2"><label for="pincode-input" class="sr-only">Enter Pincode</label><input type="text" id="pincode-input" placeholder="Pincode" maxlength="6" pattern="[0-9]{6}" aria-label="Enter 6-digit pincode" class="flex-grow p-2 text-sm bg-white rounded-lg border border-gray-100"><button id="pincode-btn" aria-label="Find constituency" class="bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-800 transition-colors">Find</button></div><div id="map" role="region" aria-label="Map" class="w-full h-64 rounded-2xl bg-gray-200 mb-4"></div><div id="constituency-info" class="hidden p-3 bg-blue-50 rounded-lg text-[10px]" aria-live="polite"></div></section>
+            <section id="content-quiz" class="hidden">
+                <div id="quiz-intro" class="text-center py-8"><h2 class="text-2xl font-bold mb-2">Voter Quiz</h2><div class="grid grid-cols-1 gap-3"><button onclick="startQuiz('Constitution')" class="p-4 bg-white border border-gray-100 rounded-2xl font-bold text-sm">Constitution</button><button onclick="startQuiz('Voting')" class="p-4 bg-white border border-gray-100 rounded-2xl font-bold text-sm">Voting Process</button></div></div>
+                <div id="quiz-container" class="hidden space-y-4"><div class="flex justify-between items-center text-[10px] font-bold text-gray-400"><span id="quiz-progress">Q1/5</span><div class="w-20 h-1 bg-gray-100 rounded-full"><div id="quiz-bar" class="h-full bg-blue-900" style="width:20%"></div></div></div><div id="quiz-question" class="text-lg font-bold"></div><div id="quiz-options" class="space-y-2"></div><div id="quiz-explanation" class="hidden p-3 rounded-xl text-xs"></div><button id="quiz-next" class="hidden w-full py-3 bg-black text-white font-bold rounded-xl text-sm">Next</button></div>
+                <div id="quiz-final" class="hidden text-center py-8 bg-white rounded-3xl"><div class="text-4xl mb-2">🏆</div><h2 class="text-xl font-bold">Done!</h2><div class="text-4xl font-bold text-blue-900 my-4" id="final-score">0</div><button onclick="location.reload()" class="w-full py-3 border rounded-xl font-bold text-sm">Restart</button></div>
+            </section>
+            <section id="content-admin" class="hidden">
+                <div id="admin-login" class="text-center py-8"><h2 class="text-xl font-bold mb-4">Admin Dashboard</h2><input type="password" id="admin-pass" placeholder="Password" class="w-full p-3 bg-white rounded-xl border-none mb-3"><button onclick="loadAdminStats()" class="w-full py-3 bg-blue-900 text-white font-bold rounded-xl">Login</button></div>
+                <div id="admin-dashboard" class="hidden space-y-4"><div class="grid grid-cols-2 gap-2"><div class="bg-white p-4 rounded-2xl border border-gray-50"><div class="text-[8px] uppercase text-gray-400">Queries</div><div id="stat-queries" class="text-xl font-bold">0</div></div><div class="bg-white p-4 rounded-2xl border border-gray-50"><div class="text-[8px] uppercase text-gray-400">Myths</div><div id="stat-myths" class="text-xl font-bold">0</div></div></div><div id="stat-questions" class="bg-white p-4 rounded-2xl border border-gray-50 space-y-1 text-[10px]"></div></div>
+            </section>
+        </main>
+
+        <button id="myth-fab" aria-label="Open Myth Buster" title="Myth Buster — verify election claims" style="cursor:pointer;" class="fixed-in-shell bottom-28 right-4 w-14 h-14 bg-red-600 text-white rounded-full flex items-center justify-center floating-fab z-[70] shadow-2xl hover:bg-red-700 transition-colors">
+            <svg class="w-8 h-8 pointer-events-none" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </button>
+
+        <footer class="p-4 text-center text-[8px] text-gray-400 bg-white border-t border-gray-50">
+            <p>&copy; 2026 ELECTRA. ECI Data Partner.</p>
+            <button onclick="switchTab('admin')" class="mt-1 font-bold hover:text-blue-900">Admin Dashboard</button>
+        </footer>
+    </div>
+
+    <!-- Myth Buster Modal -->
+    <div id="myth-modal" role="dialog" aria-modal="true" aria-labelledby="myth-modal-title" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+        <div class="bg-white w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden stagger-fade-in">
+            <div class="p-6 bg-red-600 text-white flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <h2 id="myth-modal-title" class="text-xl font-bold">Myth Buster</h2>
+                </div>
+                <button id="close-myth" aria-label="Close Myth Buster" class="p-1 hover:bg-white/20 rounded-full transition-colors"><svg aria-hidden="true" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <div class="p-6">
+                <label for="myth-input" class="text-xs text-gray-500 mb-4 uppercase tracking-widest font-bold block">Verify Election Rumors</label>
+                <textarea id="myth-input" placeholder="Enter a claim or news here..." aria-label="Claim to verify" class="w-full p-4 bg-gray-50 rounded-2xl border-none text-sm focus:ring-2 focus:ring-red-600/20 transition-all min-h-[100px] mb-4"></textarea>
+                <button id="verify-myth" class="w-full py-4 bg-red-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-red-600/20 active:scale-95 transition-all text-sm flex items-center justify-center gap-2">
+                    <span id="myth-btn-text">Verify Claim</span>
+                    <svg id="myth-loader" class="hidden w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" opacity=".2"/><path d="M21 12a9 9 0 00-9-9" stroke-linecap="round"/></svg>
+                </button>
+                <div id="myth-result" class="hidden mt-6 p-4 rounded-2xl border transition-all duration-500"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = localStorage.getItem('lang') || 'en';
+        let chatHistory = [];
+        let map;
+        let activeTab = 'chat';
+        let quizData = [];
+        let currentQuizIndex = 0;
+        let score = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initLanguage();
+            loadTimeline();
+            setTimeout(() => {
+                const splash = document.getElementById('splash');
+                if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 800); }
+            }, 2500);
+        });
+
+        function initLanguage() {
+            const btn = document.getElementById('lang-toggle');
+            if(!btn) return;
+            btn.innerText = currentLang === 'en' ? 'EN' : 'HI';
+            if (currentLang === 'hi') {
+                document.getElementById('welcome-msg').innerText = "नमस्ते! मैं इलेक्ट्रा हूँ। आज मैं आपकी क्या मदद कर सकती हूँ?";
+                btn.classList.add('bg-blue-900', 'text-white');
+            }
+            btn.onclick = () => {
+                currentLang = currentLang === 'en' ? 'hi' : 'en';
+                localStorage.setItem('lang', currentLang);
+                location.reload();
+            };
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('section[id^="content-"]').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('tab-active', 'text-navy', 'font-bold'));
+            const tabBtn = document.getElementById(`tab-${tabId}`);
+            if(tabBtn) tabBtn.classList.add('tab-active');
+            
+            const headerTitle = document.getElementById('header-title');
+            if(headerTitle) {
+                if(tabId === 'admin') { headerTitle.innerText = 'ADMIN DASHBOARD'; headerTitle.classList.add('text-red-600'); }
+                else { headerTitle.innerText = 'ELECTRA'; headerTitle.classList.remove('text-red-600'); }
+            }
+            activeTab = tabId;
+            if(tabId === 'maps' && !map) initMap();
+        }
+
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const chatMessages = document.getElementById('chat-messages');
+
+        if(sendBtn) sendBtn.onclick = handleChat;
+        if(chatInput) chatInput.onkeypress = (e) => e.key === 'Enter' && handleChat();
+
+        async function handleChat() {
+            const text = chatInput.value.trim();
+            if(!text) return;
+            addMessage('user', text);
+            chatInput.value = '';
+            document.getElementById('typing-indicator').classList.remove('hidden');
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ history: chatHistory, message: text, language: currentLang })
+                });
+                
+                if (!response.ok) {
+                    let errText = 'Server error';
+                    try { const errJson = await response.json(); errText = errJson.error || errText; } catch(e) {}
+                    throw new Error(errText);
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+                let electraMsg = '';
+                const bubble = addMessage('electra', '');
+                document.getElementById('typing-indicator').classList.add('hidden');
+                
+                let buffer = '';
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop(); // keep the last incomplete line
+                    for (const line of lines) {
+                        const trimmed = line.trim();
+                        if (!trimmed) continue;
+                        if (trimmed.startsWith('data: ')) {
+                            const data = trimmed.slice(6);
+                            if (data === '[DONE]') break;
+                            try {
+                                const parsed = JSON.parse(data);
+                                electraMsg += parsed.text;
+                                bubble.innerHTML = formatText(electraMsg);
+                                chatMessages.parentElement.scrollTop = chatMessages.parentElement.scrollHeight;
+                            } catch(e) {}
+                        }
+                    }
+                }
+                chatHistory.push({ role: 'user', parts: [{ text }] });
+                chatHistory.push({ role: 'model', parts: [{ text: electraMsg }] });
+            } catch (error) {
+                document.getElementById('typing-indicator').classList.add('hidden');
+                addMessage('electra', error.message || 'Connection error. Please try again.');
+            } finally {
+                document.getElementById('typing-indicator').classList.add('hidden');
+            }
+        }
+
+        function addMessage(sender, text) {
+            const div = document.createElement('div');
+            div.className = `p-3 max-w-[90%] text-xs stagger-fade-in ${sender === 'user' ? 'chat-bubble-user self-end ml-auto' : 'chat-bubble-electra self-start'}`;
+            div.innerHTML = formatText(text);
+            chatMessages.appendChild(div);
+            chatMessages.parentElement.scrollTop = chatMessages.parentElement.scrollHeight;
+            return div;
+        }
+
+        function formatText(text) {
+            // Safely render text: escape HTML first, then apply safe markdown-like formatting
+            const escaped = text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            return escaped
+                .replace(/\*\*(.*?)\*\*/g, '<span class="jargon-term">$1</span>')
+                .replace(/\n/g, '<br>');
+        }
+        function sendQuickChip(text) { chatInput.value = text; handleChat(); }
+
+        async function loadTimeline() {
+            const res = await fetch('/api/timeline');
+            const data = await res.json();
+            const container = document.getElementById('timeline-container');
+            data.forEach((item, i) => {
+                const card = document.createElement('div');
+                card.className = "p-3 bg-white border border-gray-100 rounded-xl";
+                card.innerHTML = `<div class="text-[8px] font-bold text-orange-600 mb-1">${item.date}</div><div class="text-sm font-bold mb-1">${item.stage}</div><p class="text-[10px] text-gray-500">${item.detail}</p>`;
+                container.appendChild(card);
+            });
+        }
+
+        document.getElementById('eligibility-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = "Checking...";
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/eligibility', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ state: document.getElementById('el-state').value, age: parseInt(document.getElementById('el-age').value), citizenship: document.getElementById('el-citizen').value }) });
+                const data = await res.json();
+                const resultDiv = document.getElementById('eligibility-result');
+                resultDiv.className = `mt-6 p-4 rounded-xl text-xs ${data.eligible ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`;
+                resultDiv.innerHTML = `<div class="font-bold text-sm mb-1">${data.eligible ? '✅ Eligible!' : '❌ Not Eligible'}</div><p class="text-gray-600">${data.reason}</p>`;
+                resultDiv.classList.remove('hidden');
+            } catch (err) { alert('Failed to check eligibility. Please try again.'); }
+            finally { btn.innerText = originalText; btn.disabled = false; }
+        };
+
+        async function initMap() {
+            const res = await fetch('/api/maps/key');
+            const { key } = await res.json();
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&callback=onMapLoaded`;
+            script.async = true;
+            document.head.appendChild(script);
+        }
+        window.onMapLoaded = () => { if(typeof google !== 'undefined') map = new google.maps.Map(document.getElementById('map'), { center: { lat: 20.5937, lng: 78.9629 }, zoom: 5, disableDefaultUI: true }); };
+
+        const pinBtn = document.getElementById('pincode-btn');
+        if(pinBtn) pinBtn.onclick = async () => {
+            const pincode = document.getElementById('pincode-input').value;
+            const res = await fetch('/api/maps/lookup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pincode }) });
+            const data = await res.json();
+            document.getElementById('constituency-info').innerHTML = `📍 ${data.lokSabha}, ${data.state}`;
+            document.getElementById('constituency-info').classList.remove('hidden');
+        };
+
+        async function startQuiz(topic) {
+            document.getElementById('quiz-intro').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('quiz-question').innerText = 'Generating questions... please wait...';
+            try {
+                const res = await fetch('/api/quiz', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ topic }) });
+                quizData = await res.json();
+                if(!quizData || quizData.length === 0 || !quizData[0].question) throw new Error('Invalid quiz data');
+                currentQuizIndex = 0; score = 0; showQuestion();
+            } catch(e) {
+                alert('Error generating quiz. Please try again.');
+                location.reload();
+            }
+        }
+
+        function showQuestion() {
+            const q = quizData[currentQuizIndex];
+            document.getElementById('quiz-progress').innerText = `Q${currentQuizIndex+1}/5`;
+            document.getElementById('quiz-bar').style.width = `${(currentQuizIndex+1)*20}%`;
+            document.getElementById('quiz-question').innerText = q.question;
+            const opts = document.getElementById('quiz-options');
+            opts.innerHTML = '';
+            q.options.forEach((o, i) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full p-3 text-left border rounded-xl text-xs";
+                btn.innerText = o;
+                btn.onclick = () => {
+                    const btns = opts.querySelectorAll('button');
+                    btns.forEach(b => b.disabled = true);
+                    if(i === q.correct) { btn.classList.add('bg-green-50', 'border-green-500'); score += 20; }
+                    else { btn.classList.add('bg-red-50', 'border-red-500'); btns[q.correct].classList.add('bg-green-50'); }
+                    document.getElementById('quiz-explanation').innerText = q.explanation;
+                    document.getElementById('quiz-explanation').classList.remove('hidden');
+                    document.getElementById('quiz-next').classList.remove('hidden');
+                };
+                opts.appendChild(btn);
+            });
+            document.getElementById('quiz-explanation').classList.add('hidden');
+            document.getElementById('quiz-next').classList.add('hidden');
+        }
+
+        const nextBtn = document.getElementById('quiz-next');
+        if(nextBtn) nextBtn.onclick = () => {
+            currentQuizIndex++;
+            if(currentQuizIndex < 5) showQuestion();
+            else {
+                document.getElementById('quiz-container').classList.add('hidden');
+                document.getElementById('quiz-final').classList.remove('hidden');
+                document.getElementById('final-score').innerText = score;
+            }
+        };
+
+        const mythBtn = document.getElementById('myth-fab');
+        if(mythBtn) mythBtn.onclick = () => {
+            const modal = document.getElementById('myth-modal');
+            modal.classList.remove('hidden');
+            modal.style.opacity = '0';
+            setTimeout(() => modal.style.opacity = '1', 10);
+        };
+        const closeMyth = document.getElementById('close-myth');
+        if(closeMyth) closeMyth.onclick = () => {
+            const modal = document.getElementById('myth-modal');
+            modal.style.opacity = '0';
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        };
+        const verifyBtn = document.getElementById('verify-myth');
+        if(verifyBtn) verifyBtn.onclick = async () => {
+            const claim = document.getElementById('myth-input').value.trim();
+            if(!claim) return;
+            const btnText = document.getElementById('myth-btn-text');
+            const loader = document.getElementById('myth-loader');
+            const resDiv = document.getElementById('myth-result');
+            
+            verifyBtn.disabled = true;
+            btnText.innerText = 'Analyzing...';
+            loader.classList.remove('hidden');
+            resDiv.classList.add('hidden');
+
+            try {
+                const res = await fetch('/api/mythbust', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ claim }) });
+                const data = await res.json();
+                resDiv.className = `mt-4 p-4 rounded-2xl text-xs ${data.verdict === 'TRUE' ? 'bg-green-50 border-green-100 text-green-800' : data.verdict === 'FALSE' ? 'bg-red-50 border-red-100 text-red-800' : 'bg-orange-50 border-orange-100 text-orange-800'}`;
+                resDiv.innerHTML = `<div class="font-bold text-sm mb-1">Verdict: ${data.verdict}</div><p>${data.explanation}</p>${data.source ? `<div class="mt-2 text-[10px] opacity-70">Source: ${data.source}</div>` : ''}`;
+                resDiv.classList.remove('hidden');
+            } catch (e) { alert('Verification failed.'); }
+            finally {
+                verifyBtn.disabled = false;
+                btnText.innerText = 'Verify Claim';
+                loader.classList.add('hidden');
+            }
+        };
+
+        async function loadAdminStats() {
+            const pass = document.getElementById('admin-pass').value;
+            const res = await fetch('/api/admin/stats', { headers: { 'x-admin-password': pass } });
+            if(!res.ok) return alert('Bad password');
+            const stats = await res.json();
+            document.getElementById('admin-login').classList.add('hidden');
+            document.getElementById('admin-dashboard').classList.remove('hidden');
+            document.getElementById('stat-queries').innerText = stats.queries;
+            document.getElementById('stat-myths').innerText = stats.mythBusts;
+        }
+
+        function setupSpeech() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) return;
+            const recognition = new SpeechRecognition();
+            recognition.lang = currentLang === 'hi' ? 'hi-IN' : 'en-IN';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            const voiceBtn = document.getElementById('voice-btn');
+            if (!voiceBtn) return;
+            voiceBtn.onclick = () => {
+                recognition.start();
+                voiceBtn.classList.add('text-red-500');
+            };
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('chat-input').value = transcript;
+                voiceBtn.classList.remove('text-red-500');
+                handleChat();
+            };
+            recognition.onerror = () => voiceBtn.classList.remove('text-red-500');
+            recognition.onend = () => voiceBtn.classList.remove('text-red-500');
+        }
+        // Initialize speech on load
+        document.addEventListener('DOMContentLoaded', setupSpeech);
+    </script>
+</body>
+</html>
