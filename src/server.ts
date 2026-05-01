@@ -25,6 +25,7 @@ import logger from './logger.ts';
 import { AppError } from './errors/AppError.ts';
 
 export const app = express();
+app.set('trust proxy', 1); // Fix for rate limiting behind Cloud Run proxy
 
 // ─── Security & Middleware ──────────────────────────────────────────────────
 
