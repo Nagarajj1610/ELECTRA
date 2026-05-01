@@ -15,7 +15,7 @@ vi.mock('@google/generative-ai', async (importOriginal) => {
         }),
         generateContent: vi.fn().mockImplementation(({ contents }: any) => {
           const prompt = contents?.[0]?.parts?.[0]?.text || '';
-          if (prompt.startsWith('Fact check:')) {
+          if (prompt.includes('Fact-check this claim:')) {
             return Promise.resolve({
               response: { text: () => JSON.stringify({ verdict: 'FALSE', explanation: 'This is a myth.', source: 'ECI' }) },
             });
@@ -50,9 +50,9 @@ process.env.ADMIN_PASSWORD = 'testpassword';
 process.env.NODE_ENV = 'test';
 
 // Import app AFTER mocks are set up
-const { app } = await import('../src/server.ts');
+const { app } = await import('../server.ts');
 
-describe('ELECTRA API — Health', () => {
+describe('ELECTRA API — Health [Integration]', () => {
   it('GET /api/health returns 200 OK', async () => {
     const res = await request(app).get('/api/health');
     expect(res.status).toBe(200);
@@ -60,7 +60,7 @@ describe('ELECTRA API — Health', () => {
   });
 });
 
-describe('ELECTRA API — Eligibility', () => {
+describe('ELECTRA API — Eligibility [Integration]', () => {
   it('POST /api/eligibility — age 20 Indian should be eligible', async () => {
     const res = await request(app)
       .post('/api/eligibility')
@@ -94,7 +94,7 @@ describe('ELECTRA API — Eligibility', () => {
   });
 });
 
-describe('ELECTRA API — Timeline', () => {
+describe('ELECTRA API — Timeline [Integration]', () => {
   it('GET /api/timeline returns 10 stages', async () => {
     const res = await request(app).get('/api/timeline');
     expect(res.status).toBe(200);
@@ -105,7 +105,7 @@ describe('ELECTRA API — Timeline', () => {
   });
 });
 
-describe('ELECTRA API — Quiz', () => {
+describe('ELECTRA API — Quiz [Integration]', () => {
   it('POST /api/quiz returns 5 questions', async () => {
     const res = await request(app)
       .post('/api/quiz')
@@ -120,7 +120,7 @@ describe('ELECTRA API — Quiz', () => {
   });
 });
 
-describe('ELECTRA API — Myth Buster', () => {
+describe('ELECTRA API — Myth Buster [Integration]', () => {
   it('POST /api/mythbust — valid claim returns verdict enum', async () => {
     const res = await request(app)
       .post('/api/mythbust')
@@ -138,7 +138,7 @@ describe('ELECTRA API — Myth Buster', () => {
   });
 });
 
-describe('ELECTRA API — Maps', () => {
+describe('ELECTRA API — Maps [Integration]', () => {
   it('GET /api/maps/key returns a key', async () => {
     const res = await request(app).get('/api/maps/key');
     expect(res.status).toBe(200);
@@ -162,7 +162,7 @@ describe('ELECTRA API — Maps', () => {
   });
 });
 
-describe('ELECTRA API — Admin', () => {
+describe('ELECTRA API — Admin [Integration]', () => {
   it('GET /api/admin/stats — wrong password returns 401', async () => {
     const res = await request(app)
       .get('/api/admin/stats')
@@ -180,7 +180,7 @@ describe('ELECTRA API — Admin', () => {
   });
 });
 
-describe('ELECTRA API — Translation', () => {
+describe('ELECTRA API — Translation [Integration]', () => {
   it('POST /api/translate — English to Hindi', async () => {
     const res = await request(app)
       .post('/api/translate')

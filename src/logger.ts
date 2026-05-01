@@ -1,23 +1,29 @@
 import winston from 'winston';
+import { LoggingWinston } from '@google-cloud/logging-winston';
+import { env } from './config/env.ts';
 
-/** Structured logger using Winston */
+const isProd = env.NODE_ENV === 'production';
+
+/**
+ * Winston transport configuration.
+ * Uses Cloud Logging in production, Console in development.
+ */
+const transports = isProd
+  ? [new LoggingWinston({ projectId: env.GOOGLE_CLOUD_PROJECT })]
+  : [new winston.transports.Console({
+      format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
+    })];
+
 const logger = winston.createLogger({
-  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  level: isProd ? 'info' : 'debug',
   format: winston.format.combine(
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     winston.format.errors({ stack: true }),
     winston.format.json()
   ),
-  transports: [
-    new winston.transports.Console({
-      format: process.env.NODE_ENV !== 'production'
-        ? winston.format.combine(winston.format.colorize(), winston.format.simple())
-        : winston.format.json(),
-    }),
-  ],
+  transports,
 });
 
-/** In-memory counters for admin stats dashboard */
 const stats = {
   queries: 0,
   mythBusts: 0,
@@ -26,44 +32,60 @@ const stats = {
   topQuestions: new Map<string, number>(),
 };
 
-type StatKey = keyof Pick<typeof stats, 'queries' | 'mythBusts' | 'quizCompletions'>;
+type StatKey = 'queries' | 'mythBusts' | 'quizCompletions' | 'en' | 'hi';
 
 /**
- * Increments a named stat counter. Tracks language usage and top questions separately.
+ * Helper to update question frequency map.
+ * @param {string} question - The query string
  */
-export const incrementStat = (
-  key: StatKey | 'en' | 'hi' | 'question',
-  question?: string
-): void => {
-  switch (key) {
-    case 'queries': stats.queries++; break;
-    case 'mythBusts': stats.mythBusts++; break;
-    case 'quizCompletions': stats.quizCompletions++; break;
-    case 'en': stats.languages.en++; break;
-    case 'hi': stats.languages.hi++; break;
-    case 'question':
-      if (question) {
-        // Trim and truncate to prevent memory abuse from large queries
-        const q = question.trim().slice(0, 200);
-        stats.topQuestions.set(q, (stats.topQuestions.get(q) ?? 0) + 1);
-        // Keep only the top 100 questions to prevent unbounded growth
-        if (stats.topQuestions.size > 100) {
-          const oldest = stats.topQuestions.keys().next().value;
-          if (oldest) stats.topQuestions.delete(oldest);
-        }
-      }
-      break;
+const trackQuestion = (question: string) => {
+  const q = question.trim().slice(0, 200);
+  stats.topQuestions.set(q, (stats.topQuestions.get(q) ?? 0) + 1);
+  if (stats.topQuestions.size > 100) {
+    const oldest = stats.topQuestions.keys().next().value;
+    if (oldest) stats.topQuestions.delete(oldest);
   }
 };
 
 /**
- * Returns all current stats, with top questions sorted by frequency.
+ * Increments aggregate metrics and sends a structured log event.
+ * @param {StatKey | 'question'} key - The metric
+ * @param {string} [question] - Optional question text
  */
-export const getStats = () => {
+export const incrementStat = (key: StatKey | 'question', question?: string): void => {
+  let eventType = 'unknown';
+  
+  if (key === 'question' && question) {
+    trackQuestion(question);
+    eventType = 'query_count';
+  } else if (key === 'en' || key === 'hi') {
+    stats.languages[key]++;
+    eventType = 'language_selected';
+  } else if (key !== 'question') {
+    stats[key]++;
+    eventType = 'feature_used';
+  }
+
+  // Send structured analytics log to GCP (Cloud Logging)
+  // These events are aggregated for analytics and contain NO PII
+  logger.info(`aggregate_event:${eventType}`, {
+    eventType,
+    metric: 'aggregate_event',
+    feature: key,
+    language: (key === 'en' || key === 'hi') ? key : undefined,
+    timestamp: new Date().toISOString(),
+  });
+};
+
+/**
+ * Retrieves the current memory stats.
+ * @returns {any} Aggregate stats object
+ */
+export const getStats = (): any => {
   const topQuestions = Array.from(stats.topQuestions.entries())
     .sort(([, a], [, b]) => b - a)
     .slice(0, 10)
-    .map(([question, count]) => ({ question, count }));
+    .map(([q, count]) => ({ question: q, count }));
 
   return {
     queries: stats.queries,

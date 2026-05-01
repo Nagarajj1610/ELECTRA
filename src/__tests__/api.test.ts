@@ -15,7 +15,7 @@ vi.mock('@google/generative-ai', async (importOriginal) => {
         }),
         generateContent: vi.fn().mockImplementation(({ contents }: any) => {
           const prompt = contents?.[0]?.parts?.[0]?.text || '';
-          if (prompt.startsWith('Fact check:')) {
+          if (prompt.includes('Fact-check this claim:')) {
             return Promise.resolve({
               response: { text: () => JSON.stringify({ verdict: 'FALSE', explanation: 'This is a myth.', source: 'ECI' }) },
             });
@@ -48,9 +48,9 @@ process.env.MAPS_API_KEY = 'test-maps-key';
 process.env.ADMIN_PASSWORD = 'testpassword';
 process.env.NODE_ENV = 'test';
 
-const { app } = await import('../src/server.ts');
+const { app } = await import('../server.ts');
 
-describe('ELECTRA API Integration', () => {
+describe('ELECTRA API [Integration]', () => {
   it('GET /api/health returns 200 with status OK', async () => {
     const res = await request(app).get('/api/health');
     expect(res.status).toBe(200);

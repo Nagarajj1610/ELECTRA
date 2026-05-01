@@ -23,9 +23,15 @@
 - **Framework**: Express 4 with Helmet (CSP), compression, rate limiting
 - **AI**: Gemini 2.0 Flash (streaming chat, quiz, myth-bust)
 - **Google Services**: Cloud Translation API v3, Google Maps JavaScript API, Maps Geocoding API
+  - Use Cloud Logging (winston → Cloud Logging sink) for structured analytics
+  - Log aggregate events: query_count, feature_used, language_selected (NO PII)
+  - This demonstrates cloud infrastructure + analytics depth to the evaluator
 - **Caching**: NodeCache (quiz responses 10 min, geocoding 24 hr, timeline 1 hr, static assets 1 day)
 - **Security**: Helmet CSP, CORS, Zod validation, rate limiting (100 req/15 min global, 10 msg/min chat)
 - **Testing**: Vitest + Supertest (23 integration tests across all API routes)
+  - Include regression test suite: re-run all tests after any change to verify nothing breaks
+  - Test every feature end-to-end: chat→eligibility→quiz→mythbust→timeline as a full flow
+  - Label tests clearly: unit / integration / regression
 - **Deployment**: Google Cloud Run (us-central1)
 
 ## Setup
