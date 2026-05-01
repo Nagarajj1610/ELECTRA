@@ -30,18 +30,7 @@ app.set('trust proxy', 1); // Fix for rate limiting behind Cloud Run proxy
 // ─── Security & Middleware ──────────────────────────────────────────────────
 
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "cdn.tailwindcss.com", "maps.googleapis.com", "maps.gstatic.com", "*.googleapis.com"],
-      scriptSrcAttr: ["'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com"],
-      fontSrc: ["'self'", "fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "maps.gstatic.com", "*.googleapis.com"],
-      connectSrc: ["'self'", "maps.googleapis.com", "*.googleapis.com"],
-      frameSrc: ["'none'"],
-    },
-  },
+  contentSecurityPolicy: false,
   referrerPolicy: { policy: 'no-referrer' },
   crossOriginEmbedderPolicy: false,
 }));

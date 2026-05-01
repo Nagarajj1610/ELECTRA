@@ -89,7 +89,7 @@
                     <h2 class="text-2xl font-bold mb-2">Welcome to ELECTRA</h2>
                     <p class="text-sm text-gray-500 mb-8">I'll guide you through the Indian election process.</p>
                     <div class="space-y-3">
-                        <button onclick="startOnboarding('I am a first-time voter')" class="w-full py-4 bg-[#0D2167] text-white rounded-2xl font-bold">I'm a first-time voter</button>
+                        <button onclick="startOnboarding('I am a first-time voter')" style="background-color:#0D2167;color:white" class="w-full py-4 rounded-2xl font-bold">I'm a first-time voter</button>
                         <button onclick="startOnboarding('I want to understand the process')" class="w-full py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold">I want to understand the process</button>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
             <section id="content-chat" class="flex flex-col h-full">
                 <div id="chat-messages" class="flex flex-col gap-6 pb-4">
                     <div class="welcome-card fade-in">
-                        <h2 class="text-3xl font-bold text-[#0D2167] mb-4">Welcome! I'm here to help with any election questions.</h2>
+                        <h2 style="color:#0D2167" class="text-3xl font-bold mb-4">Welcome! I'm here to help with any election questions.</h2>
                         <button onclick="startGuidedJourney()" class="guide-me-btn">🚀 Guide Me (10 Steps)</button>
                     </div>
                     <div class="grid grid-cols-2 gap-3 mb-6">
@@ -110,9 +110,9 @@
             
             <!-- Other Sections -->
             <section id="content-timeline" class="hidden"><div class="space-y-4" id="timeline-container"></div></section>
-            <section id="content-eligibility" class="hidden"><div class="welcome-card"><h2 class="text-2xl font-bold mb-6">Are you eligible?</h2><form id="eligibility-form" class="space-y-4"><select id="el-state" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><option value="">Select State</option><option value="Delhi">Delhi</option></select><input type="number" id="el-age" placeholder="Age" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><button type="submit" class="w-full py-4 bg-[#0D2167] text-white rounded-2xl font-bold">Verify Now</button></form><div id="eligibility-result" class="hidden mt-6 p-4 rounded-2xl"></div></div></section>
-            <section id="content-maps" class="hidden"><div class="mb-4 flex gap-2"><input type="text" id="pincode-input" placeholder="Pincode" maxlength="6" class="flex-grow p-3 bg-white rounded-2xl border border-gray-100 text-[#0D2167] font-medium"><button id="pincode-btn" class="bg-[#0D2167] text-white px-6 rounded-2xl font-bold hover:bg-opacity-90">Find</button></div><div id="map" class="w-full h-64 rounded-3xl bg-gray-200"></div><div id="constituency-info" class="hidden mt-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm text-xs"></div></section>
-            <section id="content-quiz" class="hidden"><div id="quiz-intro" class="text-center py-8"><h2 class="text-2xl font-bold mb-4">Voter Quiz</h2><button onclick="startQuiz('Voting')" class="w-full p-4 bg-white border rounded-2xl font-bold">Start Quiz</button></div><div id="quiz-container" class="hidden space-y-4"><div id="quiz-question" class="text-lg font-bold"></div><div id="quiz-options" class="space-y-2"></div><div id="quiz-explanation" class="hidden p-4 rounded-2xl bg-blue-50"></div><button id="quiz-next" class="hidden w-full py-4 bg-[#0D2167] text-white rounded-2xl">Next</button></div></section>
+            <section id="content-eligibility" class="hidden"><div class="welcome-card"><h2 class="text-2xl font-bold mb-6">Are you eligible?</h2><form id="eligibility-form" class="space-y-4"><select id="el-state" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><option value="">Select State</option><option value="Delhi">Delhi</option></select><input type="number" id="el-age" placeholder="Age" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><button type="submit" style="background-color:#0D2167;color:white" class="w-full py-4 rounded-2xl font-bold">Verify Now</button></form><div id="eligibility-result" class="hidden mt-6 p-4 rounded-2xl"></div></div></section>
+            <section id="content-maps" class="hidden"><div class="mb-4 flex gap-2"><input type="text" id="pincode-input" placeholder="Pincode" maxlength="6" style="color:#0D2167" class="flex-grow p-3 bg-white rounded-2xl border border-gray-100 font-medium"><button id="pincode-btn" style="background-color:#0D2167;color:white;padding:12px 24px" class="rounded-2xl font-bold">Find</button></div><div id="map" class="w-full h-64 rounded-3xl bg-gray-200"></div><div id="constituency-info" class="hidden mt-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm text-xs"></div></section>
+            <section id="content-quiz" class="hidden"><div id="quiz-intro" class="text-center py-8"><h2 class="text-2xl font-bold mb-4">Voter Quiz</h2><button onclick="startQuiz('Voting')" style="background-color:#0D2167;color:white" class="w-full p-4 rounded-2xl font-bold">Start Quiz</button></div><div id="quiz-container" class="hidden space-y-4"><div id="quiz-question" class="text-lg font-bold"></div><div id="quiz-options" class="space-y-2"></div><div id="quiz-explanation" class="hidden p-4 rounded-2xl bg-blue-50"></div><button id="quiz-next" style="background-color:#0D2167;color:white" class="hidden w-full py-4 rounded-2xl">Next</button></div></section>
         </main>
 
         <div class="input-bar-container">
