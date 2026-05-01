@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { MAX_MESSAGE_LENGTH, MAX_TRANSLATE_LENGTH, MAX_CLAIM_LENGTH, MIN_AGE, MAX_AGE, DEFAULT_QUIZ_SCORE } from '../constants.ts';
 
-/** Verdict enum for MythBust */
 /** Verdict constants for MythBust */
 export const Verdict = {
   TRUE: 'TRUE',
