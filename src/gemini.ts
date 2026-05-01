@@ -2,7 +2,8 @@ import { GoogleGenerativeAI, type Content, type SafetySetting, HarmCategory, Har
 import NodeCache from 'node-cache';
 import logger from './logger.ts';
 import { env } from './config/env.ts';
-import { QuizQuestion, MythBustResult, Verdict } from './types/index.ts';
+import { Verdict } from './types/index.ts';
+import type { QuizQuestion, MythBustResult } from './types/index.ts';
 import { SYSTEM_INSTRUCTION, getQuizPrompt, getMythBustPrompt, FALLBACK_QUIZ } from './prompts/index.ts';
 import { stripMarkdownJson, isValidQuizArray, safeJsonParse } from './utils/helpers.ts';
 import { CACHE_TTL_QUIZ, CACHE_CHECK_PERIOD } from './constants.ts';

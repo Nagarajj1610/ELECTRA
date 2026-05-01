@@ -1,4 +1,4 @@
-import { QuizQuestion } from '../types/index.ts';
+import type { QuizQuestion } from '../types/index.ts';
 
 export const SYSTEM_INSTRUCTION = `You are ELECTRA — the official AI guide to Indian elections and the Constitution of India.
 Your role: Help citizens, especially first-time voters, understand the democratic process.

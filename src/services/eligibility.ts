@@ -1,4 +1,4 @@
-import { EligibilityResult } from '../types/index.ts';
+import type { EligibilityResult } from '../types/index.ts';
 
 /**
  * Checks voter eligibility based on age and citizenship.

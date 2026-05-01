@@ -1,5 +1,5 @@
 import { QUIZ_QUESTIONS_COUNT } from '../constants.ts';
-import { QuizQuestion } from '../types/index.ts';
+import type { QuizQuestion } from '../types/index.ts';
 
 /**
  * Strips markdown formatting (e.g. ```json) from a string and trims it.

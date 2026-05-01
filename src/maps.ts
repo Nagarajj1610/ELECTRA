@@ -1,7 +1,7 @@
 import NodeCache from 'node-cache';
 import logger from './logger.ts';
 import { env } from './config/env.ts';
-import { ConstituencyInfo } from './types/index.ts';
+import type { ConstituencyInfo } from './types/index.ts';
 import { GEO_CACHE_TTL, GEO_CACHE_CHECK } from './constants.ts';
 import { AppError } from './utils/AppError.ts';
 
