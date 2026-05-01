@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import dotenv from 'dotenv';
-import logger from '../logger.ts';
 
 dotenv.config();
 
@@ -21,14 +20,14 @@ const envSchema = z.object({
 const _env = envSchema.safeParse(process.env);
 
 if (!_env.success) {
-  // In test mode, we might not want to exit immediately if we are just collecting tests
   if (isTest) {
     console.warn('⚠️ Some environment variables are missing, but continuing due to test mode.');
   } else {
-    console.error('❌ Invalid environment variables:', _env.error.format());
+    // Note: Using console.error here to avoid circular dependency with logger.ts
+    console.error('❌ Invalid environment variables:', JSON.stringify(_env.error.format(), null, 2));
     process.exit(1);
   }
 }
 
 /** Validated environment variables */
-export const env = _env.data || {} as any;
+export const env = (_env.success ? _env.data : {}) as any;

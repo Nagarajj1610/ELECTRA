@@ -20,7 +20,7 @@ const logger = winston.createLogger({
         winston.format.simple()
       ),
     }),
-    ...(env.NODE_ENV === 'production' ? [loggingWinston] : []),
+    ...(env && env.NODE_ENV === 'production' ? [loggingWinston] : []),
   ],
 });
 
