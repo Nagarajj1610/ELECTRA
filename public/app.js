@@ -36,6 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
         chip.onclick = () => sendQuickChip(chip.dataset.chip);
     });
 
+    const startQuizBtn = document.getElementById('start-quiz-btn');
+    if (startQuizBtn) startQuizBtn.onclick = () => startQuiz('Voting');
+
+    const historyBtn = document.getElementById('toggle-history-btn');
+    if (historyBtn) historyBtn.onclick = () => alert('History feature coming soon!');
+
     checkOnboarding();
     updateProgress();
     const mythFab = document.getElementById('myth-fab');
@@ -234,7 +240,11 @@ function updateStep() {
             const btn = document.createElement('button');
             btn.className = "mt-4 block text-[10px] font-bold text-navy underline";
             btn.innerText = currentStep < 9 ? "Continue Journey" : "Complete!";
-            btn.onclick = () => { currentStep++; if(currentStep < 10) updateStep(); else currentStep = -1; };
+            btn.addEventListener('click', () => { 
+                currentStep++; 
+                if(currentStep < 10) updateStep(); 
+                else currentStep = -1; 
+            });
             last.appendChild(btn);
         }
     }, 3000);
@@ -250,7 +260,10 @@ async function loadTimeline() {
         const card = document.createElement('button');
         card.className = "w-full text-left p-4 bg-white border border-gray-100 rounded-2xl mb-3";
         card.innerHTML = `<div class="text-[10px] font-bold text-orange-600">${item.date}</div><div class="text-sm font-bold">${item.stage}</div><p class="text-[10px] text-gray-500">${item.detail}</p>`;
-        card.onclick = () => { switchTab('chat'); sendQuickChip(`Tell me about ${item.stage}.`); };
+        card.addEventListener('click', () => { 
+            switchTab('chat'); 
+            sendQuickChip(`Tell me about ${item.stage}.`); 
+        });
         container.appendChild(card);
     });
 }
