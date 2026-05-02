@@ -62,7 +62,7 @@ describe('ELECTRA Full Flow [Regression][E2E]', () => {
     // 2. Eligibility
     const eligibilityRes = await request(app)
       .post('/api/eligibility')
-      .send({ state: 'Delhi', age: 25, citizenship: 'Indian' });
+      .send({ state: 'Delhi', age: 25, citizenship: 'indian' });
     expect(eligibilityRes.status).toBe(200);
     expect(eligibilityRes.body.eligible).toBe(true);
 

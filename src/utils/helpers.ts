@@ -1,33 +1,37 @@
-import { QUIZ_CONFIG } from '../constants.ts';
-import type { QuizQuestion } from '../types/index.ts';
+/**
+ * Strips markdown JSON code fences from a string.
+ * @param {string} text - Raw text from Gemini
+ * @returns {string} Clean JSON string
+ */
+export const stripMarkdownJson = (text: string): string =>
+  text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim();
 
 /**
- * Strips markdown formatting (e.g. ```json) from a string and trims it.
- * @param {string} text - The raw text from the AI
- * @returns {string} The cleaned string ready for JSON.parse
+ * Safely parses a JSON string without throwing.
+ * @param {string} text - JSON string to parse
+ * @returns {unknown} Parsed value or null
  */
-export const stripMarkdownJson = (text: string): string => {
-  return text.replace(/```json/gi, '').replace(/```/g, '').trim();
-};
-
-/**
- * Validates that an array is a valid quiz of the expected length.
- * @param {any[]} parsed - The parsed JSON array
- * @returns {boolean} True if valid
- */
-export const isValidQuizArray = (parsed: any[]): parsed is QuizQuestion[] => {
-  return Array.isArray(parsed) && parsed.length === QUIZ_CONFIG.QUESTIONS_COUNT;
-};
-
-/**
- * Safely parses JSON with fallback.
- * @param {string} text - The JSON string
- * @returns {any} Parsed JSON or null
- */
-export const safeJsonParse = (text: string): any | null => {
+export const safeJsonParse = (text: string): unknown => {
   try {
     return JSON.parse(text);
   } catch {
     return null;
   }
+};
+
+/**
+ * Validates that a value is a non-empty array of valid quiz questions.
+ * @param {unknown} data - Data to validate
+ * @returns {boolean} True if valid quiz array
+ */
+export const isValidQuizArray = (data: unknown): data is import('../types/index.ts').QuizQuestion[] => {
+  if (!Array.isArray(data) || data.length === 0) return false;
+  return data.every(
+    (q) =>
+      typeof q.question === 'string' &&
+      Array.isArray(q.options) &&
+      q.options.length === 4 &&
+      typeof q.correct === 'number' &&
+      typeof q.explanation === 'string'
+  );
 };

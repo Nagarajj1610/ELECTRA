@@ -6,14 +6,17 @@ import { VALIDATION, QUIZ_CONFIG, Verdict } from '../constants.ts';
 export const ChatRequestSchema = z.object({
   message: z.string().min(1, 'Message cannot be empty').max(VALIDATION.MAX_MESSAGE_LENGTH, 'Message too long'),
   language: z.enum(['en', 'hi']).default('en'),
-  history: z.array(z.any()).default([]),
+  history: z.array(z.object({
+    role: z.enum(['user', 'model']),
+    parts: z.array(z.object({ text: z.string() }))
+  })).default([]),
 });
 export type ChatRequest = z.infer<typeof ChatRequestSchema>;
 
 export const EligibilityRequestSchema = z.object({
   state: z.string().min(1).max(100),
   age: z.coerce.number().int().min(VALIDATION.MIN_AGE, 'Age must be non-negative').max(VALIDATION.MAX_AGE, 'Age seems invalid'),
-  citizenship: z.string().min(1),
+  citizenship: z.enum(['indian', 'non-indian']),
 });
 export type EligibilityRequest = z.infer<typeof EligibilityRequestSchema>;
 
@@ -56,23 +59,23 @@ export const MythBustResultSchema = z.object({
 });
 export type MythBustResult = z.infer<typeof MythBustResultSchema>;
 
-/** Eligibility check result */
-export interface EligibilityResult {
-  eligible: boolean;
-  reason: string;
-  requirements: string[];
-  deadline: string;
-  voterIdLink: string;
-}
+export const EligibilityResultSchema = z.object({
+  eligible: z.boolean(),
+  reason: z.string(),
+  requirements: z.array(z.string()),
+  deadline: z.string(),
+  voterIdLink: z.string().url(),
+});
+export type EligibilityResult = z.infer<typeof EligibilityResultSchema>;
 
-/** Type for constituency lookup result */
-export interface ConstituencyInfo {
-  state: string;
-  lokSabha: string;
-  vidhanSabha: string;
-  lat?: number;
-  lng?: number;
-}
+export const ConstituencyInfoSchema = z.object({
+  state: z.string(),
+  lokSabha: z.string(),
+  vidhanSabha: z.string(),
+  lat: z.number().optional(),
+  lng: z.number().optional(),
+});
+export type ConstituencyInfo = z.infer<typeof ConstituencyInfoSchema>;
 
 /** Admin Stats shape */
 export interface AdminStats {

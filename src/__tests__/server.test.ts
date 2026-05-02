@@ -64,7 +64,7 @@ describe('ELECTRA API — Eligibility [Integration]', () => {
   it('POST /api/eligibility — age 20 Indian should be eligible', async () => {
     const res = await request(app)
       .post('/api/eligibility')
-      .send({ state: 'Maharashtra', age: 20, citizenship: 'Indian' });
+      .send({ state: 'Maharashtra', age: 20, citizenship: 'indian' });
     expect(res.status).toBe(200);
     expect(res.body.eligible).toBe(true);
     expect(res.body).toHaveProperty('voterIdLink');
@@ -73,7 +73,7 @@ describe('ELECTRA API — Eligibility [Integration]', () => {
   it('POST /api/eligibility — age 17 should NOT be eligible', async () => {
     const res = await request(app)
       .post('/api/eligibility')
-      .send({ state: 'Delhi', age: 17, citizenship: 'Indian' });
+      .send({ state: 'Delhi', age: 17, citizenship: 'indian' });
     expect(res.status).toBe(200);
     expect(res.body.eligible).toBe(false);
   });
@@ -81,7 +81,7 @@ describe('ELECTRA API — Eligibility [Integration]', () => {
   it('POST /api/eligibility — NRI should NOT be eligible', async () => {
     const res = await request(app)
       .post('/api/eligibility')
-      .send({ state: 'Gujarat', age: 25, citizenship: 'NRI' });
+      .send({ state: 'Gujarat', age: 25, citizenship: 'non-indian' });
     expect(res.status).toBe(200);
     expect(res.body.eligible).toBe(false);
   });
@@ -89,7 +89,7 @@ describe('ELECTRA API — Eligibility [Integration]', () => {
   it('POST /api/eligibility — invalid body (non-numeric age) returns 400', async () => {
     const res = await request(app)
       .post('/api/eligibility')
-      .send({ state: 'Delhi', age: 'not-a-number', citizenship: 'Indian' });
+      .send({ state: 'Delhi', age: 'not-a-number', citizenship: 'indian' });
     expect(res.status).toBe(400);
   });
 });

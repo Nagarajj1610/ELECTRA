@@ -42,6 +42,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const historyBtn = document.getElementById('toggle-history-btn');
     if (historyBtn) historyBtn.onclick = () => alert('History feature coming soon!');
 
+    // Eligibility form
+    const eligForm = document.getElementById('eligibility-form');
+    if (eligForm) {
+        eligForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const res = await fetch('/api/eligibility', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    state: document.getElementById('el-state').value,
+                    age: document.getElementById('el-age').value,
+                    citizenship: document.getElementById('el-citizenship').value
+                })
+            });
+            const data = await res.json();
+            const resultDiv = document.getElementById('eligibility-result');
+            resultDiv.innerHTML = `<div class="p-4 rounded-2xl ${data.eligible ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}">
+                <div class="font-bold mb-2">${data.eligible ? '✓ Eligible' : '✕ Not Eligible'}</div>
+                <div class="text-sm">${data.reason}</div>
+                ${data.eligible ? `<a href="${data.voterIdLink}" target="_blank" class="block mt-4 text-xs font-bold underline">Register Now on ECI Portal</a>` : ''}
+            </div>`;
+            resultDiv.classList.remove('hidden');
+        };
+    }
+
     checkOnboarding();
     updateProgress();
     const mythFab = document.getElementById('myth-fab');
@@ -271,6 +296,88 @@ async function loadTimeline() {
 function startOnboarding(selection) { localStorage.setItem('onboarded', 'true'); document.getElementById('onboarding').classList.add('hidden'); sendQuickChip(selection); }
 function checkOnboarding() { if (!localStorage.getItem('onboarded')) document.getElementById('onboarding').classList.remove('hidden'); }
 function updateProgress() { document.getElementById('progress-text').innerText = `EXPLORED ${exploredTopics.length} OF 8 TOPICS`; }
+
+let quizData = [];
+let quizIndex = 0;
+let quizScore = 0;
+
+async function startQuiz(topic) {
+    const intro = document.getElementById('quiz-intro');
+    const container = document.getElementById('quiz-container');
+    intro.classList.add('hidden');
+    container.classList.remove('hidden');
+    container.innerHTML = '<div class="text-center py-8 animate-pulse text-navy font-bold">Gemini is generating your quiz...</div>';
+
+    try {
+        const res = await fetch('/api/quiz', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic, score: quizScore })
+        });
+        quizData = await res.json();
+        quizIndex = 0;
+        showQuizQuestion();
+    } catch (e) {
+        container.innerHTML = '<div class="text-red-600 font-bold">Failed to load quiz. Please try again.</div>';
+    }
+}
+
+function showQuizQuestion() {
+    const q = quizData[quizIndex];
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = `
+        <div class="text-lg font-bold text-navy mb-4">${q.question}</div>
+        <div class="space-y-2" id="quiz-options">
+            ${q.options.map((opt, i) => `
+                <button onclick="checkQuizAnswer(${i})" class="w-full p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all border border-transparent">
+                    ${opt}
+                </button>
+            `).join('')}
+        </div>
+        <div id="quiz-explanation" class="hidden p-4 rounded-2xl mt-4 text-sm"></div>
+        <button id="quiz-next" class="hidden w-full py-4 bg-navy text-white rounded-2xl mt-4">Next Question</button>
+    `;
+}
+
+window.checkQuizAnswer = (idx) => {
+    const q = quizData[quizIndex];
+    const options = document.querySelectorAll('#quiz-options button');
+    const explanation = document.getElementById('quiz-explanation');
+    const nextBtn = document.getElementById('quiz-next');
+
+    options.forEach(b => b.disabled = true);
+    if (idx === q.correct) {
+        options[idx].classList.add('bg-green-100', 'border-green-500');
+        quizScore += 20;
+    } else {
+        options[idx].classList.add('bg-red-100', 'border-red-500');
+        options[q.correct].classList.add('bg-green-100', 'border-green-500');
+    }
+
+    explanation.innerHTML = `<strong>${idx === q.correct ? 'Correct!' : 'Incorrect.'}</strong> ${q.explanation}`;
+    explanation.className = `p-4 rounded-2xl mt-4 text-sm ${idx === q.correct ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`;
+    explanation.classList.remove('hidden');
+    nextBtn.classList.remove('hidden');
+    nextBtn.onclick = () => {
+        quizIndex++;
+        if (quizIndex < quizData.length) showQuizQuestion();
+        else {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="text-4xl mb-4">🎉</div>
+                    <h3 class="text-2xl font-bold text-navy mb-2">Quiz Complete!</h3>
+                    <p class="text-gray-500 mb-6">Your Voter Readiness Score: ${quizScore}%</p>
+                    <button onclick="switchTab('chat')" class="w-full py-4 bg-navy text-white rounded-2xl font-bold">Return to Chat</button>
+                </div>
+            `;
+            if (quizScore >= 80 && !exploredTopics.includes('Quiz Master')) {
+                exploredTopics.push('Quiz Master');
+                updateProgress();
+            }
+        }
+    };
+};
 
 function toggleLanguage() {
     const lang = currentLang === 'en' ? 'hi' : 'en';

@@ -4,11 +4,11 @@ import type { EligibilityResult } from '../types/index.ts';
  * Checks voter eligibility based on age and citizenship.
  * @param {string} state - The voter's state
  * @param {number} age - The voter's age
- * @param {string} citizenship - The voter's citizenship status
+ * @param {string} citizenship - The voter's citizenship status ('indian' or 'non-indian')
  * @returns {EligibilityResult} The eligibility check result
  */
-export const checkEligibility = (state: string, age: number, citizenship: string): EligibilityResult => {
-  const isIndian = citizenship.toLowerCase().includes('indian') || citizenship.toLowerCase() === 'yes';
+export const checkEligibility = (state: string, age: number, citizenship: 'indian' | 'non-indian'): EligibilityResult => {
+  const isIndian = citizenship === 'indian';
   const isOfAge = age >= 18;
 
   if (isIndian && isOfAge) {

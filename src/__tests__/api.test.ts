@@ -64,7 +64,7 @@ describe('ELECTRA API Tests', () => {
     it('POST /api/eligibility — age 20 Indian is eligible', async () => {
       const res = await request(app)
         .post('/api/eligibility')
-        .send({ state: 'Delhi', age: 20, citizenship: 'Indian' });
+        .send({ state: 'Delhi', age: 20, citizenship: 'indian' });
       expect(res.status).toBe(200);
       expect(res.body.eligible).toBe(true);
     });
@@ -95,7 +95,7 @@ describe('ELECTRA API Tests', () => {
       // 2. Eligibility
       const eligRes = await request(app)
         .post('/api/eligibility')
-        .send({ state: 'Delhi', age: 18, citizenship: 'Indian' });
+        .send({ state: 'Delhi', age: 18, citizenship: 'indian' });
       expect(eligRes.status).toBe(200);
 
       // 3. Quiz
