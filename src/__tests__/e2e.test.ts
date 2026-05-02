@@ -1,3 +1,4 @@
+// Regression suite: re-run after every feature change to catch breakage
 import { describe, it, expect, vi } from 'vitest';
 import request from 'supertest';
 

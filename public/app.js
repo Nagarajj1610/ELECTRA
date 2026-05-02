@@ -217,7 +217,8 @@ function toggleLanguage() {
     const lang = currentLang === 'en' ? 'hi' : 'en';
     currentLang = lang;
     localStorage.setItem('lang', lang);
-    document.documentElement.lang = lang === 'hi' ? 'hi' : 'en';
+    const htmlRoot = document.getElementById('html-root');
+    if (htmlRoot) htmlRoot.lang = lang === 'hi' ? 'hi' : 'en';
     
     // Update UI or reload
     const btn = document.getElementById('lang-toggle-btn');
@@ -235,4 +236,5 @@ window.sendQuickChip = sendQuickChip;
 window.toggleHistory = () => alert('History feature coming soon!');
 
 // Ensure lang is set on load
-document.documentElement.lang = currentLang === 'hi' ? 'hi' : 'en';
+const htmlRootOnLoad = document.getElementById('html-root');
+if (htmlRootOnLoad) htmlRootOnLoad.lang = currentLang === 'hi' ? 'hi' : 'en';

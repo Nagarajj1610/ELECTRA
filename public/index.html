@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- ELECTRA v1.3.0 - Premium Edition -->
-<html lang="en">
+<html lang="en" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,7 +58,7 @@
                 <span class="text-xl font-bold tracking-tight text-[#0D2167]">ELECTRA</span>
             </div>
             <div class="flex items-center gap-3">
-                <button onclick="toggleLanguage()" class="text-[10px] font-bold bg-white/50 px-2 py-1 rounded-lg border border-[#0D2167]/20" id="lang-toggle-btn">EN/हि</button>
+                <button onclick="toggleLanguage()" aria-label="Toggle language" class="text-[10px] font-bold bg-white/50 px-2 py-1 rounded-lg border border-[#0D2167]/20" id="lang-toggle-btn">EN/हि</button>
                 <div class="flex flex-col items-end">
                     <div class="w-8 h-8 bg-[#0D2167] text-white rounded-full flex items-center justify-center"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg></div>
                     <div class="text-[8px] font-bold text-gray-400 mt-1 uppercase tracking-widest" id="progress-text">EXPLORED 0 OF 8 TOPICS</div>
@@ -105,34 +105,40 @@
             
             <!-- Other Sections -->
             <section id="content-timeline" class="hidden"><div class="space-y-4" id="timeline-container"></div></section>
-            <section id="content-eligibility" class="hidden"><div class="welcome-card"><h2 class="text-2xl font-bold mb-6 text-navy">Are you eligible?</h2><form id="eligibility-form" class="space-y-4"><select id="el-state" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><option value="">Select State</option><option value="Delhi">Delhi</option></select><input type="number" id="el-age" placeholder="Age" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><button type="submit" class="w-full py-4 bg-navy text-white rounded-2xl font-bold">Verify Now</button></form><div id="eligibility-result" class="hidden mt-6 p-4 rounded-2xl"></div></div></section>
-            <section id="content-maps" class="hidden"><div class="mb-4 flex gap-2"><input type="text" id="pincode-input" placeholder="Pincode" maxlength="6" class="flex-grow p-3 bg-white rounded-2xl border border-gray-100 font-medium text-navy"><button id="pincode-btn" class="bg-navy text-white py-3 px-6 rounded-2xl font-bold">Find</button></div><div id="map" class="w-full h-64 rounded-3xl bg-gray-200"></div><div id="constituency-info" class="hidden mt-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm text-xs"></div></section>
+            <section id="content-eligibility" class="hidden"><div class="welcome-card"><h2 class="text-2xl font-bold mb-6 text-navy">Are you eligible?</h2><form id="eligibility-form" class="space-y-4"><label for="el-state" class="block text-xs font-bold text-gray-400 uppercase mb-1">State</label><select id="el-state" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><option value="">Select State</option><option value="Delhi">Delhi</option></select><label for="el-age" class="block text-xs font-bold text-gray-400 uppercase mb-1">Age</label><input type="number" id="el-age" placeholder="Age" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><button type="submit" class="w-full py-4 bg-navy text-white rounded-2xl font-bold">Verify Now</button></form><div id="eligibility-result" class="hidden mt-6 p-4 rounded-2xl"></div></div></section>
+            <section id="content-maps" class="hidden"><div class="mb-4 flex gap-2"><div class="flex-grow"><label for="pincode-input" class="sr-only">Pincode</label><input type="text" id="pincode-input" placeholder="Pincode" maxlength="6" class="w-full p-3 bg-white rounded-2xl border border-gray-100 font-medium text-navy"></div><button id="pincode-btn" class="bg-navy text-white py-3 px-6 rounded-2xl font-bold">Find</button></div><div id="map" class="w-full h-64 rounded-3xl bg-gray-200"></div><div id="constituency-info" class="hidden mt-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm text-xs"></div></section>
             <section id="content-quiz" class="hidden"><div id="quiz-intro" class="text-center py-8"><h2 class="text-2xl font-bold mb-4 text-navy">Voter Quiz</h2><button onclick="startQuiz('Voting')" class="w-full p-4 bg-navy text-white rounded-2xl font-bold">Start Quiz</button></div><div id="quiz-container" class="hidden space-y-4"><div id="quiz-question" class="text-lg font-bold text-navy"></div><div id="quiz-options" class="space-y-2"></div><div id="quiz-explanation" class="hidden p-4 rounded-2xl bg-blue-50"></div><button id="quiz-next" class="hidden w-full py-4 bg-navy text-white rounded-2xl">Next</button></div></section>
         </main>
 
         <div class="input-bar-container">
             <div class="flex justify-between items-end mb-2">
                 <div class="flex gap-2">
-                    <button class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100">⋮</button>
+                    <button aria-label="More options" class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100">⋮</button>
                 </div>
                 <button onclick="toggleHistory()" class="history-btn">Chat History »</button>
             </div>
             <div class="input-pill">
-                <button id="voice-btn" class="p-2 text-gray-400">🎤</button>
-                <input type="text" id="chat-input" placeholder="Ask ELECTRA..." autocomplete="off" class="flex-grow p-2 focus:outline-none text-sm bg-transparent">
-                <button id="send-btn" class="send-btn-circle">➤</button>
+                <button id="voice-btn" aria-label="Submit question" class="p-2 text-gray-400">🎤</button>
+                <div class="flex-grow">
+                    <label for="chat-input" class="sr-only">Ask ELECTRA...</label>
+                    <input type="text" id="chat-input" placeholder="Ask ELECTRA..." autocomplete="off" class="w-full p-2 focus:outline-none text-sm bg-transparent">
+                </div>
+                <button id="send-btn" aria-label="Send message" class="send-btn-circle">➤</button>
             </div>
         </div>
 
-        <button id="myth-fab" class="fixed right-6 bottom-[120px] w-14 h-14 bg-red-600 text-white rounded-full flex items-center justify-center shadow-2xl z-50">⚠️</button>
+        <button id="myth-fab" aria-label="Open myth buster" class="fixed right-6 bottom-[120px] w-14 h-14 bg-red-600 text-white rounded-full flex items-center justify-center shadow-2xl z-50">🔍</button>
         
         <div id="myth-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div class="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-6">
-                <div class="flex justify-between items-center mb-6"><h2 class="text-xl font-bold">Myth Buster</h2><button id="close-myth">✕</button></div>
+                <div class="flex justify-between items-center mb-6"><h2 class="text-xl font-bold">Myth Buster</h2><button id="close-myth" aria-label="Close">✕</button></div>
+                <label for="myth-input" class="block text-xs font-bold text-gray-400 uppercase mb-1">Claim to verify</label>
                 <textarea id="myth-input" placeholder="Enter claim..." class="w-full p-4 bg-gray-50 rounded-2xl mb-4 h-32 border-none"></textarea>
                 <button id="verify-myth" class="w-full py-4 bg-red-600 text-white rounded-2xl font-bold">Verify Claim</button>
                 <div id="myth-result" class="hidden mt-4 p-4 rounded-2xl text-xs"></div>
             </div>
+        </div>
+    </div>
     <div id="app-data" data-maps-key="__MAPS_KEY__" class="hidden"></div>
     <script src="/app.js" defer></script>
 </body>

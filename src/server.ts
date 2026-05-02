@@ -44,6 +44,11 @@ app.use(helmet({
       frameSrc: ["https://www.google.com"],
     }
   },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  },
   referrerPolicy: { policy: 'no-referrer' },
   crossOriginEmbedderPolicy: false,
 }));
