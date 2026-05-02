@@ -61,7 +61,7 @@
                 <span class="text-xl font-bold tracking-tight text-[#0D2167]">ELECTRA</span>
             </div>
             <div class="flex items-center gap-3">
-                <button onclick="toggleLanguage()" aria-label="Toggle language" class="text-[10px] font-bold bg-white/50 px-2 py-1 rounded-lg border border-[#0D2167]/20" id="lang-toggle-btn">EN/हि</button>
+                <button aria-label="Toggle language" class="text-[10px] font-bold bg-white/50 px-2 py-1 rounded-lg border border-[#0D2167]/20" id="lang-toggle-btn">EN/हि</button>
                 <div class="flex flex-col items-end">
                     <div class="w-8 h-8 bg-[#0D2167] text-white rounded-full flex items-center justify-center"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg></div>
                     <div class="text-[8px] font-bold text-gray-400 mt-1 uppercase tracking-widest" id="progress-text">EXPLORED 0 OF 8 TOPICS</div>
@@ -70,11 +70,11 @@
         </header>
 
         <nav class="premium-nav" role="tablist">
-            <button onclick="switchTab('chat')" id="tab-chat" role="tab" aria-selected="true" aria-label="Chat tab" class="nav-item active"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3 2a1 1 0 000 2h10a1 1 0 100-2H5zm0 4a1 1 0 100 2h7a1 1 0 100-2H5z"/></svg><span>Chat</span></button>
-            <button onclick="switchTab('timeline')" id="tab-timeline" role="tab" aria-selected="false" aria-label="Timeline tab" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/></svg><span>Timeline</span></button>
-            <button onclick="switchTab('eligibility')" id="tab-eligibility" role="tab" aria-selected="false" aria-label="Eligible tab" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg><span>Eligible</span></button>
-            <button onclick="switchTab('maps')" id="tab-maps" role="tab" aria-selected="false" aria-label="Booth tab" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg><span>Booth</span></button>
-            <button onclick="switchTab('quiz')" id="tab-quiz" role="tab" aria-selected="false" aria-label="Quiz tab" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg><span>Quiz</span></button>
+            <button id="tab-chat" role="tab" aria-selected="true" aria-label="Chat tab" class="nav-item active"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3 2a1 1 0 000 2h10a1 1 0 100-2H5zm0 4a1 1 0 100 2h7a1 1 0 100-2H5z"/></svg><span>Chat</span></button>
+            <button id="tab-timeline" role="tab" aria-selected="false" aria-label="Timeline tab" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/></svg><span>Timeline</span></button>
+            <button id="tab-eligibility" role="tab" aria-selected="false" aria-label="Eligible tab" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg><span>Eligible</span></button>
+            <button id="tab-maps" role="tab" aria-selected="false" aria-label="Booth tab" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg><span>Booth</span></button>
+            <button id="tab-quiz" role="tab" aria-selected="false" aria-label="Quiz tab" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg><span>Quiz</span></button>
         </nav>
 
         <main id="main-content" class="flex-grow p-4 overflow-y-auto scroll-hide">
@@ -83,8 +83,8 @@
                     <h2 class="text-2xl font-bold mb-2">Welcome to ELECTRA</h2>
                     <p class="text-sm text-gray-500 mb-8">I'll guide you through the Indian election process.</p>
                     <div class="space-y-3">
-                        <button onclick="startOnboarding('I am a first-time voter')" class="w-full py-4 bg-navy text-white rounded-2xl font-bold">I'm a first-time voter</button>
-                        <button onclick="startOnboarding('I want to understand the process')" class="w-full py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold">I want to understand the process</button>
+                        <button id="onboarding-first-voter" class="w-full py-4 bg-navy text-white rounded-2xl font-bold">I'm a first-time voter</button>
+                        <button id="onboarding-process" class="w-full py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold">I want to understand the process</button>
                     </div>
                 </div>
             </div>
@@ -97,11 +97,11 @@
                      class="flex flex-col gap-6 pb-4">
                     <div class="welcome-card fade-in">
                         <h2 class="text-3xl font-bold mb-4 text-navy">Welcome! I'm here to help with any election questions.</h2>
-                        <button onclick="startGuidedJourney()" class="guide-me-btn">🚀 Guide Me (10 Steps)</button>
+                        <button id="guided-journey-btn" class="guide-me-btn">🚀 Guide Me (10 Steps)</button>
                     </div>
                     <div class="grid grid-cols-2 gap-3 mb-6">
-                        <button onclick="sendQuickChip('Am I Eligible?')" aria-label="Quick question: Am I Eligible?" class="chip"><span>Am I Eligible?</span></button>
-                        <button onclick="sendQuickChip('Where is my Booth?')" aria-label="Quick question: Where is my Booth?" class="chip"><span>Where is my Booth?</span></button>
+                        <button data-chip="Am I Eligible?" aria-label="Quick question: Am I Eligible?" class="chip chip-action"><span>Am I Eligible?</span></button>
+                        <button data-chip="Where is my Booth?" aria-label="Quick question: Where is my Booth?" class="chip chip-action"><span>Where is my Booth?</span></button>
                     </div>
                 </div>
             </section>

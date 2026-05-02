@@ -16,10 +16,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if(sendBtn) sendBtn.onclick = handleChat;
     if(chatInput) chatInput.onkeydown = (e) => { if(e.key === 'Enter') { e.preventDefault(); handleChat(); } };
 
+    // Accessibility & CSP: Attach listeners (removing inline onclick)
+    const langBtn = document.getElementById('lang-toggle-btn');
+    if (langBtn) langBtn.onclick = toggleLanguage;
+
+    document.querySelectorAll('nav[role="tablist"] [role="tab"]').forEach(tab => {
+        tab.onclick = () => switchTab(tab.id.replace('tab-', ''));
+    });
+
+    const onboardFirst = document.getElementById('onboarding-first-voter');
+    const onboardProc = document.getElementById('onboarding-process');
+    if (onboardFirst) onboardFirst.onclick = () => startOnboarding('I am a first-time voter');
+    if (onboardProc) onboardProc.onclick = () => startOnboarding('I want to understand the process');
+
+    const guideBtn = document.getElementById('guided-journey-btn');
+    if (guideBtn) guideBtn.onclick = startGuidedJourney;
+
+    document.querySelectorAll('.chip-action').forEach(chip => {
+        chip.onclick = () => sendQuickChip(chip.dataset.chip);
+    });
+
     checkOnboarding();
     updateProgress();
-    
-    // Myth modal logic
     const mythFab = document.getElementById('myth-fab');
     const mythModal = document.getElementById('myth-modal');
     const closeMyth = document.getElementById('close-myth');
