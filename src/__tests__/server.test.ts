@@ -138,14 +138,7 @@ describe('ELECTRA API — Myth Buster [Integration]', () => {
   });
 });
 
-describe('ELECTRA API — Configuration [Integration]', () => {
-  it('GET /api/config returns a key with signature', async () => {
-    const res = await request(app).get('/api/config');
-    expect(res.status).toBe(200);
-    expect(res.body.data).toHaveProperty('mapsKey');
-    expect(res.body).toHaveProperty('signature');
-  });
-
+describe('ELECTRA API — Maps [Integration]', () => {
   it('POST /api/maps/lookup — known pincode returns constituency', async () => {
     const res = await request(app)
       .post('/api/maps/lookup')

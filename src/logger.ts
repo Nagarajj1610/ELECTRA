@@ -35,9 +35,8 @@ const stats = {
 /**
  * Increments an aggregate statistic and logs it for Cloud Logging.
  * @param {'queries' | 'mythBusts' | 'quizCompletions' | 'en' | 'hi' | 'question'} type - Metric type
- * @param {string} [detail] - Optional detail (e.g. the question text)
  */
-export const incrementStat = (type: 'queries' | 'mythBusts' | 'quizCompletions' | 'en' | 'hi' | 'question', detail?: string) => {
+export const incrementStat = (type: 'queries' | 'mythBusts' | 'quizCompletions' | 'en' | 'hi' | 'question'): void => {
   if (type === 'en' || type === 'hi') {
     stats.languages[type]++;
     logger.info(`aggregate_event:language_selected`, { metric: 'aggregate_event', eventType: 'language_selected', feature: type, language: type });

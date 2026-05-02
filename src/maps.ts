@@ -11,7 +11,7 @@ const geoCache = new NodeCache({ stdTTL: CACHE_TTL.geocoding, checkperiod: CACHE
  * Returns the Google Maps API key safely.
  * @returns {string} The API key
  */
-export const getMapsKey = (): string => env.MAPS_API_KEY || '';
+export const getMapsKey = (): string => env.MAPS_API_KEY;
 
 /**
  * Looks up constituency information based on a pincode.
@@ -42,9 +42,10 @@ export const lookupConstituency = async (pincode: string): Promise<ConstituencyI
 
     geoCache.set(pincode, data);
     return data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof AppError) throw error;
-    logger.error(`Maps lookup error: ${error.message}`);
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error(`Maps lookup error: ${message}`);
     throw new AppError('Failed to lookup constituency', 500, 'MAPS_ERROR');
   }
 };

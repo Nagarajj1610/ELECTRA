@@ -3,7 +3,7 @@
  * ALL magic strings, numbers, and enums reside here.
  */
 
-export const PORT = process.env.PORT || 8080;
+export const PORT: number = Number(process.env.PORT) || 8080;
 
 export const RATE_LIMIT = {
   windowMs: 15 * 60 * 1000,

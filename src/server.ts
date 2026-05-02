@@ -59,7 +59,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors({ origin: env.NODE_ENV === 'production' ? false : true }));
+app.use(cors({ origin: true }));
 app.use(express.json({ limit: '50kb' }));
 app.use(compression());
 
@@ -115,7 +115,7 @@ app.get('/api/health', (_req, res) => res.status(200).json({ status: 'OK', times
 /** POST /api/chat - SSE streaming chat with Gemini */
 app.post('/api/chat', chatLimiter, asyncHandler(async (req, res) => {
   const { history, message, language } = ChatRequestSchema.parse(req.body);
-  incrementStat('question', message);
+  incrementStat('question');
   incrementStat(language as 'en' | 'hi');
 
   res.setHeader('Content-Type', 'text/event-stream');
@@ -173,15 +173,6 @@ app.get('/api/admin/stats', (req, res) => {
   res.json(getAdminStats(password));
 });
 
-/** GET /api/config - Maps API key exposure */
-app.get('/api/config', (_req, res) => {
-  const data = JSON.stringify({ mapsKey: env.MAPS_API_KEY });
-  const signature = crypto
-    .createHmac('sha256', env.ADMIN_PASSWORD || 'secret')
-    .update(data)
-    .digest('hex');
-  res.json({ data: JSON.parse(data), signature });
-});
 
 /** POST /api/maps/lookup - Pincode to constituency mapping */
 app.post('/api/maps/lookup', asyncHandler(async (req, res) => {

@@ -11,7 +11,7 @@ const translationClient = new TranslationServiceClient();
  * @returns {Promise<string>} The translated text
  */
 export const translateText = async (text: string, targetLanguage: string): Promise<string> => {
-  if (!env.GEMINI_API_KEY || env.GEMINI_API_KEY === 'test') {
+  if (!env.GOOGLE_CLOUD_PROJECT || env.GOOGLE_CLOUD_PROJECT === 'test') {
     return `[Mock Translation to ${targetLanguage}] ${text}`;
   }
 
@@ -24,8 +24,9 @@ export const translateText = async (text: string, targetLanguage: string): Promi
     });
 
     return response.translations?.[0]?.translatedText || text;
-  } catch (error: any) {
-    logger.error('Translation error:', error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error(`Translation error: ${message}`);
     return text; // Fallback to original text
   }
 };

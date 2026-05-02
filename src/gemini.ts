@@ -8,7 +8,7 @@ import { ELECTRA_SYSTEM_PROMPT, QUIZ_PROMPT, MYTHBUST_PROMPT, FALLBACK_QUIZ } fr
 import { stripMarkdownJson, isValidQuizArray, safeJsonParse } from './utils/helpers.ts';
 import { AppError } from './errors/AppError.ts';
 
-const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY || '');
+const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
 
 const safetySettings: SafetySetting[] = [
   { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
