@@ -51,6 +51,9 @@
     </style>
 </head>
 <body>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[999] focus:bg-white focus:p-2 focus:rounded focus:shadow">
+        Skip to main content
+    </a>
     <div class="app-shell scroll-hide">
         <header class="p-4 flex items-center justify-between bg-transparent">
             <div class="flex items-center gap-2">
@@ -66,12 +69,12 @@
             </div>
         </header>
 
-        <nav class="premium-nav">
-            <button onclick="switchTab('chat')" id="tab-chat" class="nav-item active"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3 2a1 1 0 000 2h10a1 1 0 100-2H5zm0 4a1 1 0 100 2h7a1 1 0 100-2H5z"/></svg><span>Chat</span></button>
-            <button onclick="switchTab('timeline')" id="tab-timeline" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/></svg><span>Timeline</span></button>
-            <button onclick="switchTab('eligibility')" id="tab-eligibility" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg><span>Eligible</span></button>
-            <button onclick="switchTab('maps')" id="tab-maps" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg><span>Booth</span></button>
-            <button onclick="switchTab('quiz')" id="tab-quiz" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg><span>Quiz</span></button>
+        <nav class="premium-nav" role="tablist">
+            <button onclick="switchTab('chat')" id="tab-chat" role="tab" aria-selected="true" aria-label="Chat tab" class="nav-item active"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3 2a1 1 0 000 2h10a1 1 0 100-2H5zm0 4a1 1 0 100 2h7a1 1 0 100-2H5z"/></svg><span>Chat</span></button>
+            <button onclick="switchTab('timeline')" id="tab-timeline" role="tab" aria-selected="false" aria-label="Timeline tab" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/></svg><span>Timeline</span></button>
+            <button onclick="switchTab('eligibility')" id="tab-eligibility" role="tab" aria-selected="false" aria-label="Eligible tab" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg><span>Eligible</span></button>
+            <button onclick="switchTab('maps')" id="tab-maps" role="tab" aria-selected="false" aria-label="Booth tab" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg><span>Booth</span></button>
+            <button onclick="switchTab('quiz')" id="tab-quiz" role="tab" aria-selected="false" aria-label="Quiz tab" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg><span>Quiz</span></button>
         </nav>
 
         <main id="main-content" class="flex-grow p-4 overflow-y-auto scroll-hide">
@@ -97,16 +100,16 @@
                         <button onclick="startGuidedJourney()" class="guide-me-btn">🚀 Guide Me (10 Steps)</button>
                     </div>
                     <div class="grid grid-cols-2 gap-3 mb-6">
-                        <div onclick="sendQuickChip('Am I Eligible?')" class="chip"><span>Am I Eligible?</span></div>
-                        <div onclick="sendQuickChip('Where is my Booth?')" class="chip"><span>Where is my Booth?</span></div>
+                        <button onclick="sendQuickChip('Am I Eligible?')" aria-label="Quick question: Am I Eligible?" class="chip"><span>Am I Eligible?</span></button>
+                        <button onclick="sendQuickChip('Where is my Booth?')" aria-label="Quick question: Where is my Booth?" class="chip"><span>Where is my Booth?</span></button>
                     </div>
                 </div>
             </section>
             
             <!-- Other Sections -->
             <section id="content-timeline" class="hidden"><div class="space-y-4" id="timeline-container"></div></section>
-            <section id="content-eligibility" class="hidden"><div class="welcome-card"><h2 class="text-2xl font-bold mb-6 text-navy">Are you eligible?</h2><form id="eligibility-form" class="space-y-4"><label for="el-state" class="block text-xs font-bold text-gray-400 uppercase mb-1">State</label><select id="el-state" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><option value="">Select State</option><option value="Delhi">Delhi</option></select><label for="el-age" class="block text-xs font-bold text-gray-400 uppercase mb-1">Age</label><input type="number" id="el-age" placeholder="Age" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><button type="submit" class="w-full py-4 bg-navy text-white rounded-2xl font-bold">Verify Now</button></form><div id="eligibility-result" class="hidden mt-6 p-4 rounded-2xl"></div></div></section>
-            <section id="content-maps" class="hidden"><div class="mb-4 flex gap-2"><div class="flex-grow"><label for="pincode-input" class="sr-only">Pincode</label><input type="text" id="pincode-input" placeholder="Pincode" maxlength="6" class="w-full p-3 bg-white rounded-2xl border border-gray-100 font-medium text-navy"></div><button id="pincode-btn" class="bg-navy text-white py-3 px-6 rounded-2xl font-bold">Find</button></div><div id="map" class="w-full h-64 rounded-3xl bg-gray-200"></div><div id="constituency-info" class="hidden mt-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm text-xs"></div></section>
+            <section id="content-eligibility" class="hidden"><div class="welcome-card"><h2 class="text-2xl font-bold mb-6 text-navy">Are you eligible?</h2><form id="eligibility-form" class="space-y-4"><fieldset><legend class="sr-only">Voter Eligibility Check</legend><label for="el-state" class="block text-xs font-bold text-gray-400 uppercase mb-1">State</label><select id="el-state" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><option value="">Select State</option><option value="Delhi">Delhi</option></select><label for="el-age" class="block text-xs font-bold text-gray-400 uppercase mb-1">Age</label><input type="number" id="el-age" placeholder="Age" class="w-full p-4 bg-gray-50 rounded-2xl border-none"></fieldset><button type="submit" class="w-full py-4 bg-navy text-white rounded-2xl font-bold">Verify Now</button></form><div id="eligibility-result" class="hidden mt-6 p-4 rounded-2xl"></div></div></section>
+            <section id="content-maps" class="hidden"><div class="mb-4 flex gap-2"><div class="flex-grow"><label for="pincode-input" class="sr-only">Pincode</label><input type="text" id="pincode-input" placeholder="Pincode" maxlength="6" class="w-full p-3 bg-white rounded-2xl border border-gray-100 font-medium text-navy"></div><button id="pincode-btn" class="bg-navy text-white py-3 px-6 rounded-2xl font-bold">Find</button></div><div id="map" role="region" aria-label="Polling booth map" class="w-full h-64 rounded-3xl bg-gray-200"></div><div id="constituency-info" class="hidden mt-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm text-xs"></div></section>
             <section id="content-quiz" class="hidden"><div id="quiz-intro" class="text-center py-8"><h2 class="text-2xl font-bold mb-4 text-navy">Voter Quiz</h2><button onclick="startQuiz('Voting')" class="w-full p-4 bg-navy text-white rounded-2xl font-bold">Start Quiz</button></div><div id="quiz-container" class="hidden space-y-4"><div id="quiz-question" class="text-lg font-bold text-navy"></div><div id="quiz-options" class="space-y-2"></div><div id="quiz-explanation" class="hidden p-4 rounded-2xl bg-blue-50"></div><button id="quiz-next" class="hidden w-full py-4 bg-navy text-white rounded-2xl">Next</button></div></section>
         </main>
 
@@ -118,7 +121,7 @@
                 <button onclick="toggleHistory()" class="history-btn">Chat History »</button>
             </div>
             <div class="input-pill">
-                <button id="voice-btn" aria-label="Submit question" class="p-2 text-gray-400">🎤</button>
+                <button id="voice-btn" aria-label="Start voice input" class="p-2 text-gray-400">🎤</button>
                 <div class="flex-grow">
                     <label for="chat-input" class="sr-only">Ask ELECTRA...</label>
                     <input type="text" id="chat-input" placeholder="Ask ELECTRA..." autocomplete="off" class="w-full p-2 focus:outline-none text-sm bg-transparent">
@@ -129,9 +132,9 @@
 
         <button id="myth-fab" aria-label="Open myth buster" class="fixed right-6 bottom-[120px] w-14 h-14 bg-red-600 text-white rounded-full flex items-center justify-center shadow-2xl z-50">🔍</button>
         
-        <div id="myth-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div id="myth-modal" role="dialog" aria-modal="true" aria-labelledby="myth-modal-title" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div class="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-6">
-                <div class="flex justify-between items-center mb-6"><h2 class="text-xl font-bold">Myth Buster</h2><button id="close-myth" aria-label="Close">✕</button></div>
+                <div class="flex justify-between items-center mb-6"><h2 id="myth-modal-title" class="text-xl font-bold">Myth Buster</h2><button id="close-myth" aria-label="Close">✕</button></div>
                 <label for="myth-input" class="block text-xs font-bold text-gray-400 uppercase mb-1">Claim to verify</label>
                 <textarea id="myth-input" placeholder="Enter claim..." class="w-full p-4 bg-gray-50 rounded-2xl mb-4 h-32 border-none"></textarea>
                 <button id="verify-myth" class="w-full py-4 bg-red-600 text-white rounded-2xl font-bold">Verify Claim</button>

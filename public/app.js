@@ -23,8 +23,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const mythFab = document.getElementById('myth-fab');
     const mythModal = document.getElementById('myth-modal');
     const closeMyth = document.getElementById('close-myth');
-    if(mythFab) mythFab.onclick = () => mythModal.classList.remove('hidden');
-    if(closeMyth) closeMyth.onclick = () => mythModal.classList.add('hidden');
+    const mythInput = document.getElementById('myth-input');
+
+    if (mythFab) {
+        mythFab.onclick = () => {
+            mythModal.classList.remove('hidden');
+            if (mythInput) mythInput.focus();
+        };
+    }
+    if (closeMyth) {
+        closeMyth.onclick = () => {
+            mythModal.classList.add('hidden');
+            if (mythFab) mythFab.focus();
+        };
+    }
+
+    // Escape key listener for modal
+    document.addEventListener('keyup', (e) => {
+        if (e.key === 'Escape' && !mythModal.classList.contains('hidden')) {
+            mythModal.classList.add('hidden');
+            if (mythFab) mythFab.focus();
+        }
+    });
 });
 
 async function handleChat() {
@@ -114,9 +134,17 @@ function switchTab(tabId) {
     document.querySelectorAll('section[id^="content-"]').forEach(s => s.classList.add('hidden'));
     const target = document.getElementById(`content-${tabId}`);
     if(target) target.classList.remove('hidden');
-    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    
+    document.querySelectorAll('.nav-item').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+    });
+    
     const tabBtn = document.getElementById(`tab-${tabId}`);
-    if(tabBtn) tabBtn.classList.add('active');
+    if(tabBtn) {
+        tabBtn.classList.add('active');
+        tabBtn.setAttribute('aria-selected', 'true');
+    }
     
     if(tabId === 'timeline') loadTimeline();
     if(tabId === 'maps' && !map) initMap();
