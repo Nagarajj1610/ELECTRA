@@ -3,6 +3,9 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cors from 'cors';
 import compression from 'compression';
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
 import { ZodError } from 'zod';
 import { env } from './config/env.ts';
 import { PORT, RATE_LIMIT } from './constants.ts';
@@ -30,7 +33,17 @@ app.set('trust proxy', 1); // Fix for rate limiting behind Cloud Run proxy
 // ─── Security & Middleware ──────────────────────────────────────────────────
 
 app.use(helmet({
-  contentSecurityPolicy: false,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://cdn.tailwindcss.com", "https://maps.googleapis.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https://maps.gstatic.com", "https://maps.googleapis.com"],
+      connectSrc: ["'self'"],
+      frameSrc: ["https://www.google.com"],
+    }
+  },
   referrerPolicy: { policy: 'no-referrer' },
   crossOriginEmbedderPolicy: false,
 }));
@@ -66,9 +79,22 @@ app.use('/api/', apiLimiter);
 
 // ─── Static Files ──────────────────────────────────────────────────────────
 
+app.get('/', (req, res) => {
+  try {
+    const htmlPath = path.join(process.cwd(), 'public', 'index.html');
+    const html = fs.readFileSync(htmlPath, 'utf-8')
+      .replace('__MAPS_KEY__', env.MAPS_API_KEY || '');
+    res.send(html);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    res.status(500).send(`Error loading index: ${message}`);
+  }
+});
+
 app.use(express.static('public', {
   maxAge: env.NODE_ENV === 'production' ? '1d' : 0,
   etag: true,
+  index: false,
 }));
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
@@ -142,9 +168,14 @@ app.get('/api/admin/stats', (req, res) => {
   res.json(getAdminStats(password));
 });
 
-/** GET /api/maps/key - Maps API key exposure */
-app.get('/api/maps/key', (_req, res) => {
-  res.json({ key: getMapsKey() });
+/** GET /api/config - Maps API key exposure */
+app.get('/api/config', (_req, res) => {
+  const data = JSON.stringify({ mapsKey: env.MAPS_API_KEY });
+  const signature = crypto
+    .createHmac('sha256', env.ADMIN_PASSWORD || 'secret')
+    .update(data)
+    .digest('hex');
+  res.json({ data: JSON.parse(data), signature });
 });
 
 /** POST /api/maps/lookup - Pincode to constituency mapping */
@@ -156,7 +187,10 @@ app.post('/api/maps/lookup', asyncHandler(async (req, res) => {
 // ─── Error Handlers ────────────────────────────────────────────────────────
 
 /** Global error handler middleware */
-app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
+app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
+  const message = err instanceof Error ? err.message : String(err);
+  const stack = err instanceof Error ? err.stack : undefined;
+
   if (err instanceof ZodError) {
     return res.status(400).json({ 
       error: 'Invalid input', 
@@ -167,7 +201,7 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({ error: err.message, errorCode: err.errorCode });
   }
-  logger.error(`Unhandled error on ${req.method} ${req.path}: ${err.message}`, { stack: err.stack });
+  logger.error(`Unhandled error on ${req.method} ${req.path}: ${message}`, { stack });
   res.status(500).json({ error: 'Internal server error', errorCode: 'INTERNAL_ERROR' });
 });
 

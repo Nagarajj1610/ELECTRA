@@ -3,7 +3,7 @@ import NodeCache from 'node-cache';
 import logger from './logger.ts';
 import { env } from './config/env.ts';
 import { Verdict, CACHE_TTL } from './constants.ts';
-import type { QuizQuestion, MythBustResult } from './types/index.ts';
+import { type QuizQuestion, type MythBustResult, MythBustResultSchema } from './types/index.ts';
 import { ELECTRA_SYSTEM_PROMPT, QUIZ_PROMPT, MYTHBUST_PROMPT, FALLBACK_QUIZ } from './prompts/index.ts';
 import { stripMarkdownJson, isValidQuizArray, safeJsonParse } from './utils/helpers.ts';
 import { AppError } from './errors/AppError.ts';
@@ -11,10 +11,10 @@ import { AppError } from './errors/AppError.ts';
 const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY || '');
 
 const safetySettings: SafetySetting[] = [
-  { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
-  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
-  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+  { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE },
 ];
 
 const model = genAI.getGenerativeModel({
@@ -87,9 +87,10 @@ export const generateQuiz = async (topic: string, score: number = 0): Promise<Qu
       return parsed;
     }
     throw new AppError('Invalid quiz format from Gemini', 500, 'GEMINI_INVALID_JSON');
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (err instanceof AppError) throw err;
-    logger.warn(`Quiz generation failed (topic=${topic}): ${err?.message || err}.`);
+    const message = err instanceof Error ? err.message : String(err);
+    logger.warn(`Quiz generation failed (topic=${topic}): ${message}.`);
     return FALLBACK_QUIZ;
   }
 };
@@ -108,15 +109,16 @@ export const mythBust = async (claim: string): Promise<MythBustResult> => {
   try {
     const prompt = MYTHBUST_PROMPT(claim);
     const rawText = await callGeminiJson(prompt);
-    const parsed = safeJsonParse(rawText) as MythBustResult | null;
+    const result = MythBustResultSchema.safeParse(safeJsonParse(rawText));
     
-    if (!parsed || !Object.values(Verdict).includes(parsed.verdict)) {
-      throw new AppError('Invalid verdict value', 500, 'GEMINI_INVALID_JSON');
+    if (!result.success) {
+      throw new AppError('Invalid verdict', 500, 'GEMINI_INVALID_JSON');
     }
-    return parsed;
-  } catch (err: any) {
+    return result.data;
+  } catch (err: unknown) {
     if (err instanceof AppError) throw err;
-    logger.warn(`Myth bust failed: ${err?.message || err}`);
+    const message = err instanceof Error ? err.message : String(err);
+    logger.warn(`Myth bust failed: ${message}`);
     return {
       verdict: Verdict.MISLEADING,
       explanation: "Couldn't verify right now. Check eci.gov.in.",

@@ -115,4 +115,36 @@ describe('ELECTRA API Tests', () => {
       expect(timeRes.status).toBe(200);
     });
   });
+
+  describe('Failure Simulation', () => {
+    it('[regression] returns fallback when Gemini is unavailable', async () => {
+      // Mock generateContent to throw for this specific test
+      const { GoogleGenerativeAI } = await import('@google/generative-ai');
+      const mockModel = new GoogleGenerativeAI('').getGenerativeModel({ model: '' });
+      vi.mocked(mockModel.generateContent).mockRejectedValueOnce(new Error('Gemini Down'));
+
+      const res = await request(app)
+        .post('/api/quiz')
+        .send({ topic: 'Politics', score: 0 });
+      
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body[0].question).toBeDefined();
+    });
+
+    it('[regression] chat limiter returns 429 after 11 rapid requests', async () => {
+      // Send 10 successful requests
+      for (let i = 0; i < 10; i++) {
+        await request(app)
+          .post('/api/chat')
+          .send({ message: `request ${i}`, language: 'en', history: [] });
+      }
+      // 11th request must return 429
+      const res = await request(app)
+        .post('/api/chat')
+        .send({ message: 'request 11', language: 'en', history: [] });
+      
+      expect(res.status).toBe(429);
+    }, 15000); // Higher timeout for sequential requests
+  });
 });

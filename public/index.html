@@ -6,20 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ELECTRA — Indian Election Intelligence Assistant</title>
     <meta name="description" content="AI-powered Indian Election Intelligence Assistant for citizens and first-time voters.">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        navy: '#0D2167',
-                        saffron: '#FF9933',
-                        surface: '#FDF8F4'
-                    }
-                }
-            }
-        }
-    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/tailwind-config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -69,9 +57,12 @@
                 <svg class="w-6 h-6 text-[#0D2167] loader-chakra" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6" /><circle cx="50" cy="50" r="10" fill="currentColor" /></svg>
                 <span class="text-xl font-bold tracking-tight text-[#0D2167]">ELECTRA</span>
             </div>
-            <div class="flex flex-col items-end">
-                <div class="w-8 h-8 bg-[#0D2167] text-white rounded-full flex items-center justify-center"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg></div>
-                <div class="text-[8px] font-bold text-gray-400 mt-1 uppercase tracking-widest" id="progress-text">EXPLORED 0 OF 8 TOPICS</div>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleLanguage()" class="text-[10px] font-bold bg-white/50 px-2 py-1 rounded-lg border border-[#0D2167]/20" id="lang-toggle-btn">EN/हि</button>
+                <div class="flex flex-col items-end">
+                    <div class="w-8 h-8 bg-[#0D2167] text-white rounded-full flex items-center justify-center"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg></div>
+                    <div class="text-[8px] font-bold text-gray-400 mt-1 uppercase tracking-widest" id="progress-text">EXPLORED 0 OF 8 TOPICS</div>
+                </div>
             </div>
         </header>
 
@@ -89,16 +80,20 @@
                     <h2 class="text-2xl font-bold mb-2">Welcome to ELECTRA</h2>
                     <p class="text-sm text-gray-500 mb-8">I'll guide you through the Indian election process.</p>
                     <div class="space-y-3">
-                        <button onclick="startOnboarding('I am a first-time voter')" style="background-color:#0D2167;color:white" class="w-full py-4 rounded-2xl font-bold">I'm a first-time voter</button>
+                        <button onclick="startOnboarding('I am a first-time voter')" class="w-full py-4 bg-navy text-white rounded-2xl font-bold">I'm a first-time voter</button>
                         <button onclick="startOnboarding('I want to understand the process')" class="w-full py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold">I want to understand the process</button>
                     </div>
                 </div>
             </div>
 
             <section id="content-chat" class="flex flex-col h-full">
-                <div id="chat-messages" class="flex flex-col gap-6 pb-4">
+                <div id="chat-messages" 
+                     aria-live="polite" 
+                     aria-atomic="false" 
+                     aria-relevant="additions text"
+                     class="flex flex-col gap-6 pb-4">
                     <div class="welcome-card fade-in">
-                        <h2 style="color:#0D2167" class="text-3xl font-bold mb-4">Welcome! I'm here to help with any election questions.</h2>
+                        <h2 class="text-3xl font-bold mb-4 text-navy">Welcome! I'm here to help with any election questions.</h2>
                         <button onclick="startGuidedJourney()" class="guide-me-btn">🚀 Guide Me (10 Steps)</button>
                     </div>
                     <div class="grid grid-cols-2 gap-3 mb-6">
@@ -110,9 +105,9 @@
             
             <!-- Other Sections -->
             <section id="content-timeline" class="hidden"><div class="space-y-4" id="timeline-container"></div></section>
-            <section id="content-eligibility" class="hidden"><div class="welcome-card"><h2 class="text-2xl font-bold mb-6">Are you eligible?</h2><form id="eligibility-form" class="space-y-4"><select id="el-state" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><option value="">Select State</option><option value="Delhi">Delhi</option></select><input type="number" id="el-age" placeholder="Age" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><button type="submit" style="background-color:#0D2167;color:white" class="w-full py-4 rounded-2xl font-bold">Verify Now</button></form><div id="eligibility-result" class="hidden mt-6 p-4 rounded-2xl"></div></div></section>
-            <section id="content-maps" class="hidden"><div class="mb-4 flex gap-2"><input type="text" id="pincode-input" placeholder="Pincode" maxlength="6" style="color:#0D2167" class="flex-grow p-3 bg-white rounded-2xl border border-gray-100 font-medium"><button id="pincode-btn" style="background-color:#0D2167;color:white;padding:12px 24px" class="rounded-2xl font-bold">Find</button></div><div id="map" class="w-full h-64 rounded-3xl bg-gray-200"></div><div id="constituency-info" class="hidden mt-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm text-xs"></div></section>
-            <section id="content-quiz" class="hidden"><div id="quiz-intro" class="text-center py-8"><h2 class="text-2xl font-bold mb-4">Voter Quiz</h2><button onclick="startQuiz('Voting')" style="background-color:#0D2167;color:white" class="w-full p-4 rounded-2xl font-bold">Start Quiz</button></div><div id="quiz-container" class="hidden space-y-4"><div id="quiz-question" class="text-lg font-bold"></div><div id="quiz-options" class="space-y-2"></div><div id="quiz-explanation" class="hidden p-4 rounded-2xl bg-blue-50"></div><button id="quiz-next" style="background-color:#0D2167;color:white" class="hidden w-full py-4 rounded-2xl">Next</button></div></section>
+            <section id="content-eligibility" class="hidden"><div class="welcome-card"><h2 class="text-2xl font-bold mb-6 text-navy">Are you eligible?</h2><form id="eligibility-form" class="space-y-4"><select id="el-state" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><option value="">Select State</option><option value="Delhi">Delhi</option></select><input type="number" id="el-age" placeholder="Age" class="w-full p-4 bg-gray-50 rounded-2xl border-none"><button type="submit" class="w-full py-4 bg-navy text-white rounded-2xl font-bold">Verify Now</button></form><div id="eligibility-result" class="hidden mt-6 p-4 rounded-2xl"></div></div></section>
+            <section id="content-maps" class="hidden"><div class="mb-4 flex gap-2"><input type="text" id="pincode-input" placeholder="Pincode" maxlength="6" class="flex-grow p-3 bg-white rounded-2xl border border-gray-100 font-medium text-navy"><button id="pincode-btn" class="bg-navy text-white py-3 px-6 rounded-2xl font-bold">Find</button></div><div id="map" class="w-full h-64 rounded-3xl bg-gray-200"></div><div id="constituency-info" class="hidden mt-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm text-xs"></div></section>
+            <section id="content-quiz" class="hidden"><div id="quiz-intro" class="text-center py-8"><h2 class="text-2xl font-bold mb-4 text-navy">Voter Quiz</h2><button onclick="startQuiz('Voting')" class="w-full p-4 bg-navy text-white rounded-2xl font-bold">Start Quiz</button></div><div id="quiz-container" class="hidden space-y-4"><div id="quiz-question" class="text-lg font-bold text-navy"></div><div id="quiz-options" class="space-y-2"></div><div id="quiz-explanation" class="hidden p-4 rounded-2xl bg-blue-50"></div><button id="quiz-next" class="hidden w-full py-4 bg-navy text-white rounded-2xl">Next</button></div></section>
         </main>
 
         <div class="input-bar-container">
@@ -129,7 +124,7 @@
             </div>
         </div>
 
-        <button id="myth-fab" style="bottom: 120px;" class="fixed right-6 w-14 h-14 bg-red-600 text-white rounded-full flex items-center justify-center shadow-2xl z-50">⚠️</button>
+        <button id="myth-fab" class="fixed right-6 bottom-[120px] w-14 h-14 bg-red-600 text-white rounded-full flex items-center justify-center shadow-2xl z-50">⚠️</button>
         
         <div id="myth-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div class="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-6">
@@ -138,221 +133,7 @@
                 <button id="verify-myth" class="w-full py-4 bg-red-600 text-white rounded-2xl font-bold">Verify Claim</button>
                 <div id="myth-result" class="hidden mt-4 p-4 rounded-2xl text-xs"></div>
             </div>
-        </div>
-    </div>
-
-    <script>
-        // GLOBAL STATE
-        let chatInput, sendBtn, chatMessages;
-        let currentLang = localStorage.getItem('lang') || 'en';
-        let chatHistory = [];
-        let exploredTopics = JSON.parse(localStorage.getItem('exploredTopics') || '[]');
-
-        const guidedSteps = ["What is an election?", "Who can vote?", "How to register?", "Finding booth", "Documents needed", "Using EVM", "VVPAT", "NOTA", "Results", "Myths"];
-        let currentStep = -1;
-
-        // INITIALIZATION
-        document.addEventListener('DOMContentLoaded', () => {
-            chatInput = document.getElementById('chat-input');
-            sendBtn = document.getElementById('send-btn');
-            chatMessages = document.getElementById('chat-messages');
-
-            if(sendBtn) sendBtn.onclick = handleChat;
-            if(chatInput) chatInput.onkeydown = (e) => { if(e.key === 'Enter') { e.preventDefault(); handleChat(); } };
-
-            checkOnboarding();
-            updateProgress();
-            
-            // Myth modal logic
-            const mythFab = document.getElementById('myth-fab');
-            const mythModal = document.getElementById('myth-modal');
-            const closeMyth = document.getElementById('close-myth');
-            if(mythFab) mythFab.onclick = () => mythModal.classList.remove('hidden');
-            if(closeMyth) closeMyth.onclick = () => mythModal.classList.add('hidden');
-        });
-
-        async function handleChat() {
-            const text = chatInput.value.trim();
-            if(!text) return;
-            
-            addMessage('user', text);
-            chatInput.value = '';
-            
-            const typing = document.createElement('div');
-            typing.className = 'text-[10px] text-gray-400 ml-4 animate-pulse';
-            typing.innerText = 'ELECTRA is thinking...';
-            chatMessages.appendChild(typing);
-            scrollToBottom();
-
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ history: chatHistory, message: text, language: currentLang })
-                });
-                
-                if (typing.parentNode) chatMessages.removeChild(typing);
-                
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder('utf-8');
-                let electraMsg = '';
-                const bubble = addMessage('electra', '');
-                
-                let buffer = '';
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    buffer += decoder.decode(value, { stream: true });
-                    const lines = buffer.split('\n');
-                    buffer = lines.pop();
-                    for (const line of lines) {
-                        if (line.startsWith('data: ')) {
-                            const data = line.slice(6);
-                            if (data === '[DONE]') break;
-                            try {
-                                const parsed = JSON.parse(data);
-                                electraMsg += parsed.text;
-                                bubble.innerHTML = formatText(electraMsg);
-                                scrollToBottom();
-                            } catch(e) {}
-                        }
-                    }
-                }
-                chatHistory.push({ role: 'user', parts: [{ text }] }, { role: 'model', parts: [{ text: electraMsg }] });
-            } catch (error) {
-                if (typing.parentNode) chatMessages.removeChild(typing);
-                addMessage('electra', 'Connection error. Please try again.');
-            }
-        }
-
-        function addMessage(sender, text) {
-            if (!chatMessages) return null;
-            const div = document.createElement('div');
-            div.className = `flex w-full ${sender === 'user' ? 'justify-end' : 'justify-start'} fade-in mb-4`;
-            const bubble = document.createElement('div');
-            bubble.className = sender === 'user' ? 'bubble-user' : 'bubble-electra';
-            bubble.style.maxWidth = '85%';
-            bubble.innerHTML = formatText(text);
-            div.appendChild(bubble);
-            chatMessages.appendChild(div);
-            scrollToBottom();
-            return bubble;
-        }
-
-        function scrollToBottom() {
-            const main = document.getElementById('main-content');
-            if(main) main.scrollTop = main.scrollHeight;
-        }
-
-        function formatText(text) {
-            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                       .replace(/\*\*(.*?)\*\*/g, '<span class="font-bold text-[#0D2167]">$1</span>')
-                       .replace(/\n/g, '<br>');
-        }
-
-        function sendQuickChip(text) { 
-            if(chatInput) { chatInput.value = text; handleChat(); }
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('section[id^="content-"]').forEach(s => s.classList.add('hidden'));
-            const target = document.getElementById(`content-${tabId}`);
-            if(target) target.classList.remove('hidden');
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-            const tabBtn = document.getElementById(`tab-${tabId}`);
-            if(tabBtn) tabBtn.classList.add('active');
-            
-            if(tabId === 'timeline') loadTimeline();
-            if(tabId === 'maps' && !map) initMap();
-        }
-
-        let map;
-        /**
-         * Initializes Google Maps after fetching API key.
-         */
-        async function initMap() {
-            try {
-                const res = await fetch('/api/maps/key');
-                const { key } = await res.json();
-                const script = document.createElement('script');
-                script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&callback=onMapLoaded`;
-                script.async = true;
-                document.head.appendChild(script);
-            } catch (e) {
-                console.error('Failed to init map:', e);
-            }
-        }
-
-        window.onMapLoaded = () => {
-            if(typeof google !== 'undefined') {
-                map = new google.maps.Map(document.getElementById('map'), {
-                    center: { lat: 20.5937, lng: 78.9629 },
-                    zoom: 5,
-                    styles: [{ "featureType": "all", "elementType": "all", "stylers": [{ "saturation": -100 }] }],
-                    disableDefaultUI: true
-                });
-
-                document.getElementById('pincode-btn').onclick = async () => {
-                    const pin = document.getElementById('pincode-input').value;
-                    if(pin.length !== 6) return;
-                    const res = await fetch('/api/maps/lookup', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ pincode: pin })
-                    });
-                    const data = await res.json();
-                    if(data.lat) {
-                        const pos = { lat: data.lat, lng: data.lng };
-                        map.setCenter(pos);
-                        map.setZoom(14);
-                        new google.maps.Marker({ position: pos, map });
-                        const info = document.getElementById('constituency-info');
-                        info.innerHTML = `<strong>Constituency:</strong> ${data.constituency}<br><strong>State:</strong> ${data.state}`;
-                        info.classList.remove('hidden');
-                    }
-                };
-            }
-        };
-
-        function startGuidedJourney() {
-            currentStep = 0;
-            updateStep();
-        }
-
-        function updateStep() {
-            if (currentStep < 0 || currentStep >= guidedSteps.length) return;
-            sendQuickChip(`Step ${currentStep + 1}: ${guidedSteps[currentStep]}. Explain this.`);
-            setTimeout(() => {
-                const bubbles = document.querySelectorAll('.bubble-electra');
-                const last = bubbles[bubbles.length - 1];
-                if (last) {
-                    const btn = document.createElement('button');
-                    btn.className = "mt-4 block text-[10px] font-bold text-[#0D2167] underline";
-                    btn.innerText = currentStep < 9 ? "Continue Journey" : "Complete!";
-                    btn.onclick = () => { currentStep++; if(currentStep < 10) updateStep(); else currentStep = -1; };
-                    last.appendChild(btn);
-                }
-            }, 3000);
-        }
-
-        async function loadTimeline() {
-            const res = await fetch('/api/timeline');
-            const data = await res.json();
-            const container = document.getElementById('timeline-container');
-            if(!container) return;
-            container.innerHTML = '';
-            data.forEach((item) => {
-                const card = document.createElement('button');
-                card.className = "w-full text-left p-4 bg-white border border-gray-100 rounded-2xl mb-3";
-                card.innerHTML = `<div class="text-[10px] font-bold text-orange-600">${item.date}</div><div class="text-sm font-bold">${item.stage}</div><p class="text-[10px] text-gray-500">${item.detail}</p>`;
-                card.onclick = () => { switchTab('chat'); sendQuickChip(`Tell me about ${item.stage}.`); };
-                container.appendChild(card);
-            });
-        }
-
-        function startOnboarding(selection) { localStorage.setItem('onboarded', 'true'); document.getElementById('onboarding').classList.add('hidden'); sendQuickChip(selection); }
-        function checkOnboarding() { if (!localStorage.getItem('onboarded')) document.getElementById('onboarding').classList.remove('hidden'); }
-        function updateProgress() { document.getElementById('progress-text').innerText = `EXPLORED ${exploredTopics.length} OF 8 TOPICS`; }
-    </script>
+    <div id="app-data" data-maps-key="__MAPS_KEY__" class="hidden"></div>
+    <script src="/app.js" defer></script>
 </body>
 </html>
